@@ -11,8 +11,8 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.90.1
-Release:	%mkrel 8
+Version:	0.90.2
+Release:	%mkrel 1
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
