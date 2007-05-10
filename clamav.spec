@@ -12,7 +12,7 @@
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.90.2
-Release:	%mkrel 3
+Release:	%mkrel 4
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -368,7 +368,6 @@ done
 %doc AUTHORS BUGS ChangeLog FAQ NEWS README test UPGRADE
 %doc docs/*.pdf
 %doc README.qmail+qmail-scanner COPYING
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/freshclam.conf
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/freshclam
 %attr(0755,root,root) %{_initrddir}/freshclam
@@ -382,7 +381,6 @@ done
 %{_mandir}/man1/clamdscan.1*
 %{_mandir}/man1/clamscan.1*
 %{_mandir}/man1/freshclam.1*
-%{_mandir}/man5/clamd.conf.5*
 %{_mandir}/man5/freshclam.conf.5*
 %if !%{milter}
 %exclude %{_mandir}/man8/%{name}-milter.8*
@@ -394,9 +392,11 @@ done
 
 %files -n clamd
 %defattr(-,root,root)
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/clamd
 %attr(0755,root,root) %{_initrddir}/clamd
 %{_sbindir}/clamd
+%{_mandir}/man5/clamd.conf.5*
 %{_mandir}/man8/clamd.8*
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/clamd.log
 
