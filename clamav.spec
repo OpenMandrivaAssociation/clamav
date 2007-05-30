@@ -12,7 +12,7 @@
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.90.2
-Release:	%mkrel 4
+Release:	%mkrel 5
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -368,6 +368,7 @@ done
 %doc AUTHORS BUGS ChangeLog FAQ NEWS README test UPGRADE
 %doc docs/*.pdf
 %doc README.qmail+qmail-scanner COPYING
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/freshclam.conf
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/freshclam
 %attr(0755,root,root) %{_initrddir}/freshclam
