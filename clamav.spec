@@ -11,8 +11,8 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.90.2
-Release:	%mkrel 5
+Version:	0.90.3
+Release:	%mkrel 1
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -442,5 +442,3 @@ done
 %doc contrib/clamdmon/clamdmon-*/readme
 %attr(0755,root,root) %config(noreplace) %{_sysconfdir}/cron.d/clamdmon
 %attr(0755,root,root) %{_sbindir}/clamdmon
-
-
