@@ -12,7 +12,7 @@
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.90.3
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -165,16 +165,13 @@ cp %{SOURCE6} Mandriva/clamav-milter.init
 cp %{SOURCE7} Mandriva/clamav-milter.sysconfig
 
 %build
+%serverbuild
 
 # build some of the contrib stuff
 pushd contrib/clamdmon
     tar -zxf clamdmon-*.tar.gz
 	pushd clamdmon-*
-%if %mdkversion >= 200710
-	    gcc %{optflags} -fstack-protector-all -o clamdmon clamdmon.c
-%else
-	    gcc %{optflags} -o clamdmon clamdmon.c
-%endif
+	    gcc $CFLAGS -o clamdmon clamdmon.c
 	popd
 popd
 
@@ -184,14 +181,6 @@ libtoolize --copy --force && aclocal-1.7 && autoconf && automake-1.7
 %endif
 
 export SENDMAIL="%{_libdir}/sendmail"
-
-%serverbuild
-
-%if %mdkversion >= 200710
-export CFLAGS="%{optflags} -fstack-protector-all"
-export CXXFLAGS="%{optflags} -fstack-protector-all"
-export FFLAGS="%{optflags} -fstack-protector-all"
-%endif
 
 %configure2_5x \
     --disable-%{name} \
@@ -205,10 +194,11 @@ export FFLAGS="%{optflags} -fstack-protector-all"
     --with-zlib=%{_prefix} \
     --disable-zlib-vcheck \
 %if %{milter}
-    --enable-milter --with-tcpwrappers
+    --enable-milter --with-tcpwrappers \
 %else
-    --disable-milter --without-tcpwrappers
+    --disable-milter --without-tcpwrappers \
 %endif			
+    --enable-experimental
 
 #    --enable-debug \
 
