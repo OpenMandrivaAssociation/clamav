@@ -11,8 +11,8 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.90.3
-Release:	%mkrel 2
+Version:	0.91
+Release:	%mkrel 1
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -24,7 +24,7 @@ Source4:	clamav-freshclamd.init
 Source5:	clamav-freshclam.logrotate
 Source6:	clamav-milter.init
 Source7:	clamav-milter.sysconfig
-Patch0:		clamav-0.90-mdv-config.patch
+Patch0:		clamav-mdv_conf.diff
 Requires(post): clamav-db
 Requires(preun): clamav-db
 Requires(post): %{libname} = %{version}
@@ -34,22 +34,13 @@ Requires(preun): rpm-helper
 Requires(pre): rpm-helper
 Requires(postun): rpm-helper
 BuildRequires:	bzip2-devel
-BuildRequires:	curl-devel
 BuildRequires:	bc
-%if %mdkversion >= 1000
-BuildRequires:	autoconf2.5
-BuildRequires:	automake1.7
-%endif
 %if %{milter}
 BuildRequires:	sendmail-devel
 BuildRequires:	tcp_wrappers-devel
 %endif
 BuildRequires:	zlib-devel
 BuildRequires:	gmp-devel
-BuildRequires:	curl-devel
-%if %mdkversion >= 1020
-BuildRequires:	multiarch-utils >= 1.0.3
-%endif
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description 
@@ -175,11 +166,6 @@ pushd contrib/clamdmon
 	popd
 popd
 
-%if %mdkversion > 1000
-export WANT_AUTOCONF_2_5=1
-libtoolize --copy --force && aclocal-1.7 && autoconf && automake-1.7
-%endif
-
 export SENDMAIL="%{_libdir}/sendmail"
 
 %configure2_5x \
@@ -190,7 +176,6 @@ export SENDMAIL="%{_libdir}/sendmail"
     --enable-id-check \
     --enable-clamuko \
     --enable-bigstack \
-    --with-libcurl \
     --with-zlib=%{_prefix} \
     --disable-zlib-vcheck \
 %if %{milter}
@@ -277,9 +262,7 @@ fi
 # Regards // Oden Eriksson
 EOF
 
-%if %mdkversion >= 1020
 %multiarch_binaries %{buildroot}%{_bindir}/clamav-config
-%endif
 
 # clamdmon
 install -m0755 contrib/clamdmon/clamdmon-*/clamdmon %{buildroot}%{_sbindir}/clamdmon
@@ -356,8 +339,8 @@ done
 %files
 %defattr(-,root,root)
 %doc AUTHORS BUGS ChangeLog FAQ NEWS README test UPGRADE
-%doc docs/*.pdf
-%doc README.qmail+qmail-scanner COPYING
+%doc docs/*.pdf contrib/phishing
+%doc README.qmail+qmail-scanner COPYING COPYING.nsis
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/freshclam.conf
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/freshclam
@@ -414,9 +397,7 @@ done
 
 %files -n %{libname}-devel
 %defattr(-,root,root)
-%if %mdkversion >= 1020
 %multiarch %{multiarch_bindir}/clamav-config
-%endif
 %{_bindir}/clamav-config
 %{_includedir}/*
 %{_libdir}/*.a
