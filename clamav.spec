@@ -12,7 +12,7 @@
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.91
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -35,12 +35,19 @@ Requires(pre): rpm-helper
 Requires(postun): rpm-helper
 BuildRequires:	bzip2-devel
 BuildRequires:	bc
+%if %mdkversion >= 1000
+BuildRequires:	autoconf2.5
+BuildRequires:	automake1.7
+%endif
 %if %{milter}
 BuildRequires:	sendmail-devel
 BuildRequires:	tcp_wrappers-devel
 %endif
 BuildRequires:	zlib-devel
 BuildRequires:	gmp-devel
+%if %mdkversion >= 1020
+BuildRequires:	multiarch-utils >= 1.0.3
+%endif
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description 
@@ -156,6 +163,11 @@ cp %{SOURCE6} Mandriva/clamav-milter.init
 cp %{SOURCE7} Mandriva/clamav-milter.sysconfig
 
 %build
+%if %mdkversion > 1000
+export WANT_AUTOCONF_2_5=1
+libtoolize --copy --force; aclocal-1.7; autoconf; automake-1.7
+%endif
+
 %serverbuild
 
 # build some of the contrib stuff
@@ -262,7 +274,9 @@ fi
 # Regards // Oden Eriksson
 EOF
 
+%if %mdkversion >= 1020
 %multiarch_binaries %{buildroot}%{_bindir}/clamav-config
+%endif
 
 # clamdmon
 install -m0755 contrib/clamdmon/clamdmon-*/clamdmon %{buildroot}%{_sbindir}/clamdmon
@@ -397,7 +411,9 @@ done
 
 %files -n %{libname}-devel
 %defattr(-,root,root)
+%if %mdkversion >= 1020
 %multiarch %{multiarch_bindir}/clamav-config
+%endif
 %{_bindir}/clamav-config
 %{_includedir}/*
 %{_libdir}/*.a
