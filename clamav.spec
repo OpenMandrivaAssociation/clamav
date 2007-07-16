@@ -12,7 +12,7 @@
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.91
-Release:	%mkrel 2
+Release:	%mkrel 3
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -25,6 +25,7 @@ Source5:	clamav-freshclam.logrotate
 Source6:	clamav-milter.init
 Source7:	clamav-milter.sysconfig
 Patch0:		clamav-mdv_conf.diff
+Patch1:		clamav-0.91-phischeck_crash.patch
 Requires(post): clamav-db
 Requires(preun): clamav-db
 Requires(post): %{libname} = %{version}
@@ -152,7 +153,8 @@ for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type 
     if [ -e "$i" ]; then rm -rf $i; fi >&/dev/null
 done
 	
-%patch0 -p1 -b .mdkconf
+%patch0 -p1 -b .mdvconf
+%patch1 -p1 -b .phiscrash
 
 mkdir -p Mandriva
 cp %{SOURCE2} Mandriva/clamav-clamd.init
