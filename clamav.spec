@@ -25,7 +25,7 @@ Source5:	clamav-freshclam.logrotate
 Source6:	clamav-milter.init
 Source7:	clamav-milter.sysconfig
 Patch0:		clamav-mdv_conf.diff
-Patch1:		clamav-0.91-phischeck_crash.patch
+Patch1:		clamav-phishcheck-crash.diff
 Requires(post): clamav-db
 Requires(preun): clamav-db
 Requires(post): %{libname} = %{version}
@@ -154,7 +154,7 @@ for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type 
 done
 	
 %patch0 -p1 -b .mdvconf
-%patch1 -p1 -b .phiscrash
+%patch1 -p0 -b .phiscrash
 
 mkdir -p Mandriva
 cp %{SOURCE2} Mandriva/clamav-clamd.init
