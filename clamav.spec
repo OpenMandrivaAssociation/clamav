@@ -11,8 +11,8 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.91
-Release:	%mkrel 3
+Version:	0.91.1
+Release:	%mkrel 1
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -25,7 +25,6 @@ Source5:	clamav-freshclam.logrotate
 Source6:	clamav-milter.init
 Source7:	clamav-milter.sysconfig
 Patch0:		clamav-mdv_conf.diff
-Patch1:		clamav-phishcheck-crash.diff
 Requires(post): clamav-db
 Requires(preun): clamav-db
 Requires(post): %{libname} = %{version}
@@ -49,6 +48,7 @@ BuildRequires:	gmp-devel
 %if %mdkversion >= 1020
 BuildRequires:	multiarch-utils >= 1.0.3
 %endif
+Conflicts:	clamd < 0.91
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description 
@@ -154,7 +154,6 @@ for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type 
 done
 	
 %patch0 -p1 -b .mdvconf
-%patch1 -p0 -b .phiscrash
 
 mkdir -p Mandriva
 cp %{SOURCE2} Mandriva/clamav-clamd.init
@@ -372,6 +371,7 @@ done
 %{_mandir}/man1/clamscan.1*
 %{_mandir}/man1/freshclam.1*
 %{_mandir}/man5/freshclam.conf.5*
+%{_mandir}/man5/clamd.conf.5*
 %if !%{milter}
 %exclude %{_mandir}/man8/%{name}-milter.8*
 %endif
@@ -382,11 +382,9 @@ done
 
 %files -n clamd
 %defattr(-,root,root)
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/clamd
 %attr(0755,root,root) %{_initrddir}/clamd
 %{_sbindir}/clamd
-%{_mandir}/man5/clamd.conf.5*
 %{_mandir}/man8/clamd.8*
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/clamd.log
 
