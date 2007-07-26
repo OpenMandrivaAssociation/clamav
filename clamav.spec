@@ -1,18 +1,25 @@
+%if %mdkversion == 300
+%define distversion C30
+#compatability macros:
+%{?!mkrel:%define mkrel(c:) %{-c: 0.%{-c*}.}%{!?_with_unstable:%(perl -e '$_="%{1}";m/(.\*\\D\+)?(\\d+)$/;$rel=${2}-1;re;print "$1$rel";').%{?subrel:%subrel}%{!?subrel:1}.%{?distversion:%distversion}%{?!distversion:%(echo $[%{mdkversion}/10])}}%{?_with_unstable:%{1}}%{?distsuffix:%distsuffix}%{?!distsuffix:mdk}}
+%endif
+
 %define	major 2
 %define libname	%mklibname %{name} %{major}
 
 %define milter	1
 
-#compatability macros:
-%{?!mkrel:%define mkrel(c:) %{-c:0.%{-c*}.}%{!?_with_unstable:%(perl -e '$_="%{1}";m/(.\*\\D\+)?(\\d+)$/;$rel=${2}-1;re;print "$1$rel";').%{?subrel:%subrel}%{!?subrel:1}.%{?distversion:%distversion}%{?!distversion:%(echo $[%{mdkversion}/10])}}%{?_with_unstable:%{1}}%{?distsuffix:%distsuffix}%{?!distsuffix:mdk}}
-
 %{?_with_milter:   %{expand: %%global milter 1}}
 %{?_without_milter:   %{expand: %%global milter 0}}
+
+%if %mdkversion <= 200710
+%define subrel 1
+%endif
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.91.1
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -168,8 +175,17 @@ cp %{SOURCE7} Mandriva/clamav-milter.sysconfig
 export WANT_AUTOCONF_2_5=1
 libtoolize --copy --force; aclocal-1.7; autoconf; automake-1.7
 %endif
+%if %mdkversion == 300
+%define __libtoolize /bin/true
+%endif
 
 %serverbuild
+
+%if %mdkversion == 200710
+export CFLAGS="$CFLAGS -fstack-protector-all"
+export CXXFLAGS="$CXXFLAGS -fstack-protector-all"
+export FFLAGS="$FFLAGS -fstack-protector-all"
+%endif
 
 # build some of the contrib stuff
 pushd contrib/clamdmon
