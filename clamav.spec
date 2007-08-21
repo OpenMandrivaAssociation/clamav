@@ -5,7 +5,8 @@
 %endif
 
 %define	major 2
-%define libname	%mklibname %{name} %{major}
+%define libname %mklibname %{name} %{major}
+%define develname %mklibname %{name} -d
 
 %define milter	1
 
@@ -18,8 +19,8 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.91.1
-Release:	%mkrel 2
+Version:	0.91.2
+Release:	%mkrel 1
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -128,15 +129,17 @@ Group:          System/Libraries
 %description -n	%{libname}
 Shared libraries for %{name}
 
-%package -n	%{libname}-devel
+%package -n	%{develname}
 Summary:	Development library and header files for the %{name} library
 Group:		Development/C
 Requires:	%{libname} = %{version}
 Provides:	%{name}-devel lib%{name}-devel
 Obsoletes:	%{name}-devel lib%{name}-devel
 Obsoletes:	%{mklibname clamav 1}-devel
+Provides:	%{mklibname clamav 2}-devel = %{version}
+Obsoletes:	%{mklibname clamav 2}-devel
 
-%description -n	%{libname}-devel
+%description -n	%{develname}
 This package contains the static %{libname} library and its header
 files.
 
@@ -425,7 +428,7 @@ done
 %defattr(-,root,root)
 %{_libdir}/*.so.%{major}*
 
-%files -n %{libname}-devel
+%files -n %{develname}
 %defattr(-,root,root)
 %if %mdkversion >= 1020
 %multiarch %{multiarch_bindir}/clamav-config
