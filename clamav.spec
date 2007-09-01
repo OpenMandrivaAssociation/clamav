@@ -20,7 +20,7 @@
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.91.2
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -133,10 +133,9 @@ Shared libraries for %{name}
 Summary:	Development library and header files for the %{name} library
 Group:		Development/C
 Requires:	%{libname} = %{version}
-Provides:	%{name}-devel lib%{name}-devel
-Obsoletes:	%{name}-devel lib%{name}-devel
+Provides:	%{name}-devel = %{version}
+Obsoletes:	%{name}-devel
 Obsoletes:	%{mklibname clamav 1}-devel
-Provides:	%{mklibname clamav 2}-devel = %{version}
 Obsoletes:	%{mklibname clamav 2}-devel
 
 %description -n	%{develname}
