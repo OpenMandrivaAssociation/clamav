@@ -57,7 +57,6 @@ BuildRequires:	gmp-devel
 BuildRequires:	multiarch-utils >= 1.0.3
 %endif
 Conflicts:	clamd < 0.91
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description 
 Clam AntiVirus is an anti-virus toolkit for Unix. The main purpose
