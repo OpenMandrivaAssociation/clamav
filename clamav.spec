@@ -4,7 +4,7 @@
 %{?!mkrel:%define mkrel(c:) %{-c: 0.%{-c*}.}%{!?_with_unstable:%(perl -e '$_="%{1}";m/(.\*\\D\+)?(\\d+)$/;$rel=${2}-1;re;print "$1$rel";').%{?subrel:%subrel}%{!?subrel:1}.%{?distversion:%distversion}%{?!distversion:%(echo $[%{mdkversion}/10])}}%{?_with_unstable:%{1}}%{?distsuffix:%distsuffix}%{?!distsuffix:mdk}}
 %endif
 
-%define	major 2
+%define	major 3
 %define libname %mklibname %{name} %{major}
 %define develname %mklibname %{name} -d
 
@@ -19,8 +19,8 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.91.2
-Release:	%mkrel 4
+Version:	0.92
+Release:	%mkrel 1
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -57,6 +57,11 @@ BuildRequires:	gmp-devel
 BuildRequires:	multiarch-utils >= 1.0.3
 %endif
 Conflicts:	clamd < 0.91
+%if %mdkversion == 200600
+BuildRequires:	gcc3.3
+BuildRequires:	gcc3.3-cpp
+%endif
+Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description 
 Clam AntiVirus is an anti-virus toolkit for Unix. The main purpose
@@ -136,6 +141,7 @@ Provides:	%{name}-devel = %{version}
 Obsoletes:	%{name}-devel
 Obsoletes:	%{mklibname clamav 1}-devel
 Obsoletes:	%{mklibname clamav 2}-devel
+Obsoletes:	%{mklibname clamav 3}-devel
 
 %description -n	%{develname}
 This package contains the static %{libname} library and its header
@@ -180,6 +186,15 @@ libtoolize --copy --force; aclocal-1.7; autoconf; automake-1.7
 %define __libtoolize /bin/true
 %endif
 
+%if %mdkversion == 200600
+# checking for gcc bug PR28045... configure: error: your compiler has gcc PR28045 bug,
+# use a different compiler, see http://gcc.gnu.org/bugzilla/show_bug.cgi?id=28045
+%define __cc gcc-3.3.6
+%define __cpp cpp-3.3.6
+export CC="%{__cc}"
+export CPP="%{__cpp}"
+%endif
+
 %serverbuild
 
 %if %mdkversion == 200710
@@ -192,7 +207,7 @@ export FFLAGS="$FFLAGS -fstack-protector-all"
 pushd contrib/clamdmon
     tar -zxf clamdmon-*.tar.gz
 	pushd clamdmon-*
-	    gcc $CFLAGS -o clamdmon clamdmon.c
+	    %{__cc} $CFLAGS -o clamdmon clamdmon.c
 	popd
 popd
 
