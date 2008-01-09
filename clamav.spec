@@ -6,12 +6,7 @@
 
 %define	major 3
 %define libname %mklibname %{name} %{major}
-
-%if %mdkversion <= 200800
-%define develname %mklibname %{name} %{major} -d
-%else
 %define develname %mklibname %{name} -d
-%endif
 
 %define milter	1
 
@@ -25,7 +20,7 @@
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.92
-Release:	%mkrel 2
+Release:	%mkrel 3
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -143,11 +138,6 @@ Group:		Development/C
 Requires:	%{libname} = %{version}
 Provides:	%{name}-devel = %{version}-%{release}
 Obsoletes:	%{name}-devel
-%if %mdkversion <= 200800
-Provides:      lib%{name}-devel = %{version}-%{release}
-Obsoletes:     lib%{name}-devel
-Provides:      %{mklibname clamav 3 -d} = %{version}-%{release}
-%endif
 Obsoletes:	%{mklibname clamav 1 -d}
 Obsoletes:	%{mklibname clamav 2 -d}
 Obsoletes:	%{mklibname clamav 3 -d}
