@@ -6,21 +6,26 @@
 
 %define	major 3
 %define libname %mklibname %{name} %{major}
+
+%if %mdkversion <= 200800
+%define develname %mklibname %{name} %{major} -d
+%else
 %define develname %mklibname %{name} -d
+%endif
 
 %define milter	1
 
 %{?_with_milter:   %{expand: %%global milter 1}}
 %{?_without_milter:   %{expand: %%global milter 0}}
 
-%if %mdkversion <= 200710
+%if %mdkversion <= 200800
 %define subrel 1
 %endif
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.92
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -61,16 +66,15 @@ Conflicts:	clamd < 0.91
 BuildRequires:	gcc3.3
 BuildRequires:	gcc3.3-cpp
 %endif
-Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-root
+Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description 
-Clam AntiVirus is an anti-virus toolkit for Unix. The main purpose
-of this software is the integration with mail seversions (attachment
-scanning). The package provides a flexible and scalable
-multi-threaded daemon, a commandline scanner, and a tool for
-automatic updating via Internet. The programs are based on a
-shared library distributed with the Clam AntiVirus package, which
-you can use in your own software. 
+Clam AntiVirus is an anti-virus toolkit for Unix. The main purpose of this
+software is the integration with mail seversions (attachment scanning). The
+package provides a flexible and scalable multi-threaded daemon, a commandline
+scanner, and a tool for automatic updating via Internet. The programs are based
+on a shared library distributed with the Clam AntiVirus package, which you can
+use in your own software. 
 
 You can build %{name} with some conditional build swithes;
 
@@ -137,11 +141,16 @@ Shared libraries for %{name}
 Summary:	Development library and header files for the %{name} library
 Group:		Development/C
 Requires:	%{libname} = %{version}
-Provides:	%{name}-devel = %{version}
+Provides:	%{name}-devel = %{version}-%{release}
 Obsoletes:	%{name}-devel
-Obsoletes:	%{mklibname clamav 1}-devel
-Obsoletes:	%{mklibname clamav 2}-devel
-Obsoletes:	%{mklibname clamav 3}-devel
+%if %mdkversion <= 200800
+Provides:      lib%{name}-devel = %{version}-%{release}
+Obsoletes:     lib%{name}-devel
+Provides:      %{mklibname clamav 3 -d} = %{version}-%{release}
+%endif
+Obsoletes:	%{mklibname clamav 1 -d}
+Obsoletes:	%{mklibname clamav 2 -d}
+Obsoletes:	%{mklibname clamav 3 -d}
 
 %description -n	%{develname}
 This package contains the static %{libname} library and its header
