@@ -20,7 +20,7 @@
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.92
-Release:	%mkrel 3
+Release:	%mkrel 4
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -58,8 +58,8 @@ BuildRequires:	multiarch-utils >= 1.0.3
 %endif
 Conflicts:	clamd < 0.91
 %if %mdkversion == 200600
-BuildRequires:	gcc3.3
-BuildRequires:	gcc3.3-cpp
+BuildRequires:	gcc-cpp >= 4.0.1-5.1.20060
+BuildRequires:	gcc-c++ >= 4.0.1-5.1.20060
 %endif
 Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
@@ -183,15 +183,6 @@ libtoolize --copy --force; aclocal-1.7; autoconf; automake-1.7
 %endif
 %if %mdkversion == 300
 %define __libtoolize /bin/true
-%endif
-
-%if %mdkversion == 200600
-# checking for gcc bug PR28045... configure: error: your compiler has gcc PR28045 bug,
-# use a different compiler, see http://gcc.gnu.org/bugzilla/show_bug.cgi?id=28045
-%define __cc gcc-3.3.6
-%define __cpp cpp-3.3.6
-export CC="%{__cc}"
-export CPP="%{__cpp}"
 %endif
 
 %serverbuild
