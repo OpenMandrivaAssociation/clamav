@@ -4,7 +4,7 @@
 %{?!mkrel:%define mkrel(c:) %{-c: 0.%{-c*}.}%{!?_with_unstable:%(perl -e '$_="%{1}";m/(.\*\\D\+)?(\\d+)$/;$rel=${2}-1;re;print "$1$rel";').%{?subrel:%subrel}%{!?subrel:1}.%{?distversion:%distversion}%{?!distversion:%(echo $[%{mdkversion}/10])}}%{?_with_unstable:%{1}}%{?distsuffix:%distsuffix}%{?!distsuffix:mdk}}
 %endif
 
-%define	major 3
+%define	major 4
 %define libname %mklibname %{name} %{major}
 %define develname %mklibname %{name} -d
 
@@ -19,8 +19,8 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.92.1
-Release:	%mkrel 2
+Version:	0.93
+Release:	%mkrel 1
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -43,11 +43,13 @@ Requires(pre): rpm-helper
 Requires(postun): rpm-helper
 BuildRequires:	bzip2-devel
 BuildRequires:	bc
+BuildRequires:	gmp-devel
 %if %mdkversion >= 1000
 BuildRequires:	autoconf2.5
 BuildRequires:	automake1.7
 %endif
 %if %{milter}
+BuildRequires:	sendmail
 BuildRequires:	sendmail-devel
 BuildRequires:	tcp_wrappers-devel
 %endif
@@ -162,10 +164,10 @@ restart ClamAV daemon...
 %setup -q -n %{name}-%{version}
 
 # clean up
-for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type f -name .#\*`; do
+for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type f -name .#\*` `find . -type d -name .svn`; do
     if [ -e "$i" ]; then rm -rf $i; fi >&/dev/null
 done
-	
+
 %patch0 -p1 -b .mdvconf
 
 mkdir -p Mandriva
@@ -177,10 +179,10 @@ cp %{SOURCE6} Mandriva/clamav-milter.init
 cp %{SOURCE7} Mandriva/clamav-milter.sysconfig
 
 %build
-%if %mdkversion > 1000
-export WANT_AUTOCONF_2_5=1
-libtoolize --copy --force; aclocal-1.7; autoconf; automake-1.7
-%endif
+#%%if %mdkversion > 1000
+#export WANT_AUTOCONF_2_5=1
+#libtoolize --copy --force; aclocal; autoconf; automake
+#%%endif
 %if %mdkversion == 300
 %define __libtoolize /bin/true
 %endif
@@ -201,9 +203,8 @@ pushd contrib/clamdmon
 	popd
 popd
 
-export SENDMAIL="%{_libdir}/sendmail"
-
 %configure2_5x \
+    --disable-rpath \
     --disable-%{name} \
     --with-user=%{name} \
     --with-group=%{name} \
@@ -221,6 +222,9 @@ export SENDMAIL="%{_libdir}/sendmail"
     --enable-experimental
 
 #    --enable-debug \
+
+# anti rpath hack
+perl -pi -e "s|^sys_lib_dlsearch_path_spec=.*|sys_lib_dlsearch_path_spec=\"/%{_lib} %{_libdir}\"|g" libtool
 
 %make 
 
@@ -377,7 +381,7 @@ done
 %defattr(-,root,root)
 %doc AUTHORS BUGS ChangeLog FAQ NEWS README test UPGRADE
 %doc docs/*.pdf contrib/phishing
-%doc README.qmail+qmail-scanner COPYING COPYING.nsis
+%doc README.qmail+qmail-scanner COPYING*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/freshclam.conf
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/freshclam
