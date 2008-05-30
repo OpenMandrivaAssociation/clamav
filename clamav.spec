@@ -148,17 +148,6 @@ Obsoletes:	%{mklibname clamav 3 -d}
 This package contains the static %{libname} library and its header
 files.
 
-%package -n	clamdmon
-Summary:	A little program for checking ClamAV daemon health
-Group:		System/Servers
-Requires:	clamd = %{version}
-
-%description -n	clamdmon
-ClamdMon is a little program for checking ClamAV daemon health. ClamdMon send
-to clamd stream, which contain EICAR test signature. If virus found, ClamdMon
-will return 1, otherwise 0. It's time to verify database integrity or/and
-restart ClamAV daemon...
-
 %prep
 
 %setup -q -n %{name}-%{version}rc1
@@ -194,14 +183,6 @@ export CFLAGS="$CFLAGS -fstack-protector-all"
 export CXXFLAGS="$CXXFLAGS -fstack-protector-all"
 export FFLAGS="$FFLAGS -fstack-protector-all"
 %endif
-
-# build some of the contrib stuff
-pushd contrib/clamdmon
-    tar -zxf clamdmon-*.tar.gz
-	pushd clamdmon-*
-	    %{__cc} $CFLAGS -o clamdmon clamdmon.c
-	popd
-popd
 
 %configure2_5x \
     --disable-rpath \
@@ -304,18 +285,6 @@ EOF
 %if %mdkversion >= 1020
 %multiarch_binaries %{buildroot}%{_bindir}/clamav-config
 %endif
-
-# clamdmon
-install -m0755 contrib/clamdmon/clamdmon-*/clamdmon %{buildroot}%{_sbindir}/clamdmon
-
-install -d %{buildroot}%{_sysconfdir}/cron.d
-cat > clamdmon.crond << EOF
-#!/bin/sh
-
-*/5 * * * * root %{_sbindir}/clamdmon -p %{_localstatedir}/%{name}/clamd.socket
-EOF
-install -m0755 clamdmon.crond %{buildroot}%{_sysconfdir}/cron.d/clamdmon
-
 
 %pre
 %_pre_useradd %{name} %{_localstatedir}/%{name} /bin/sh
@@ -446,12 +415,3 @@ done
 %{_libdir}/*.so
 %{_libdir}/*.la
 %{_libdir}/pkgconfig/libclamav.pc
-
-%files -n clamdmon
-%defattr(-,root,root)
-%doc contrib/clamdmon/clamdmon-*/COPYING
-%doc contrib/clamdmon/clamdmon-*/ChangeLog
-%doc contrib/clamdmon/clamdmon-*/clamdmon.sh
-%doc contrib/clamdmon/clamdmon-*/readme
-%attr(0755,root,root) %config(noreplace) %{_sysconfdir}/cron.d/clamdmon
-%attr(0755,root,root) %{_sbindir}/clamdmon
