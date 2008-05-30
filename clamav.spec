@@ -19,13 +19,13 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.93
-Release:	%mkrel 1
+Version:	0.93.1
+Release:	%mkrel 0.rc1.1
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
-Source0:	http://www.clamav.net/%{name}-%{version}.tar.gz
-Source1:	http://www.clamav.net/%{name}-%{version}.tar.gz.sig
+Source0:	http://www.clamav.net/%{name}-%{version}rc1.tar.gz
+Source1:	http://www.clamav.net/%{name}-%{version}rc1.tar.gz.sig
 Source2:	clamav-clamd.init
 Source3:	clamav-clamd.logrotate
 Source4:	clamav-freshclamd.init
@@ -161,7 +161,7 @@ restart ClamAV daemon...
 
 %prep
 
-%setup -q -n %{name}-%{version}
+%setup -q -n %{name}-%{version}rc1
 
 # clean up
 for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type f -name .#\*` `find . -type d -name .svn`; do
