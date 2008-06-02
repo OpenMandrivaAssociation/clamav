@@ -189,7 +189,7 @@ export FFLAGS="$FFLAGS -fstack-protector-all"
     --disable-%{name} \
     --with-user=%{name} \
     --with-group=%{name} \
-    --with-dbdir=%{_localstatedir}/%{name} \
+    --with-dbdir=%{_localstatedir}/lib/%{name} \
     --enable-id-check \
     --enable-clamuko \
     --enable-bigstack \
@@ -244,7 +244,7 @@ install -m644 etc/freshclam.conf %{buildroot}%{_sysconfdir}/freshclam.conf
 install -d %{buildroot}%{_var}/run/%{name}
 
 # fix TMPDIR
-install -d %{buildroot}%{_localstatedir}/%{name}/tmp
+install -d %{buildroot}%{_localstatedir}/lib/%{name}/tmp
 
 cat > README.qmail+qmail-scanner <<EOF
 #!/bin/sh
@@ -267,7 +267,7 @@ perl -pi -e "s|%{name} %{name}|qscand qscand|g" %{_sysconfdir}/logrotate.d/fresh
 perl -pi -e "s|^User %{name}|User qscand|g" %{_sysconfdir}/clamd.conf
 perl -pi -e "s|^DatabaseOwner %{name}|DatabaseOwner qscand|g" %{_sysconfdir}/freshclam.conf
 
-chown -R qscand:qscand %{_localstatedir}/%{name}
+chown -R qscand:qscand %{_localstatedir}/lib/%{name}
 chown -R qscand:qscand %{_var}/log/%{name}
 chown -R qscand:qscand %{_var}/run/%{name}
 
@@ -287,7 +287,7 @@ EOF
 %endif
 
 %pre
-%_pre_useradd %{name} %{_localstatedir}/%{name} /bin/sh
+%_pre_useradd %{name} %{_localstatedir}/lib/%{name} /bin/sh
 
 if ! [ -z "`getent group amavis`" ]; then
     gpasswd -a %{name} amavis
@@ -301,7 +301,7 @@ fi
 %_preun_service freshclam
 
 %pre -n clamd
-%_pre_useradd %{name} %{_localstatedir}/%{name} /bin/sh
+%_pre_useradd %{name} %{_localstatedir}/lib/%{name} /bin/sh
 
 %post -n clamd
 %_post_service clamd
@@ -322,7 +322,7 @@ fi
 %endif
 
 %pre -n %{name}-db
-%_pre_useradd %{name} %{_localstatedir}/%{name} /bin/sh
+%_pre_useradd %{name} %{_localstatedir}/lib/%{name} /bin/sh
 
 %post -n %{name}-db
 # try to keep most uptodate database
@@ -371,7 +371,7 @@ done
 %exclude %{_mandir}/man8/%{name}-milter.8*
 %endif
 %dir %attr(0755,%{name},%{name}) %{_var}/run/%{name}
-%dir %attr(0755,%{name},%{name}) %{_localstatedir}/%{name}
+%dir %attr(0755,%{name},%{name}) %{_localstatedir}/lib/%{name}
 %dir %attr(0755,%{name},%{name}) %{_var}/log/%{name}
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/freshclam.log
 
@@ -395,10 +395,10 @@ done
 
 %files -n %{name}-db
 %defattr(-,root,root)
-%dir %attr(0755,%{name},%{name}) %{_localstatedir}/%{name}
-%attr(0644,%{name},%{name}) %config(noreplace) %{_localstatedir}/%{name}/daily.cvd
-%attr(0644,%{name},%{name}) %config(noreplace) %{_localstatedir}/%{name}/main.cvd
-%dir %attr(0755,%{name},%{name}) %{_localstatedir}/%{name}/tmp
+%dir %attr(0755,%{name},%{name}) %{_localstatedir}/lib/%{name}
+%attr(0644,%{name},%{name}) %config(noreplace) %{_localstatedir}/lib/%{name}/daily.cvd
+%attr(0644,%{name},%{name}) %config(noreplace) %{_localstatedir}/lib/%{name}/main.cvd
+%dir %attr(0755,%{name},%{name}) %{_localstatedir}/lib/%{name}/tmp
 
 %files -n %{libname}
 %defattr(-,root,root)
