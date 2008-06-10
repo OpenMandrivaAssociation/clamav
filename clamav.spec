@@ -8,7 +8,7 @@
 %define libname %mklibname %{name} %{major}
 %define develname %mklibname %{name} -d
 
-%define milter	1
+%define milter	0
 
 %{?_with_milter:   %{expand: %%global milter 1}}
 %{?_without_milter:   %{expand: %%global milter 0}}
@@ -20,12 +20,12 @@
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.93.1
-Release:	%mkrel 0.rc1.1
+Release:	%mkrel 1
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
-Source0:	http://www.clamav.net/%{name}-%{version}rc1.tar.gz
-Source1:	http://www.clamav.net/%{name}-%{version}rc1.tar.gz.sig
+Source0:	http://www.clamav.net/%{name}-%{version}.tar.gz
+Source1:	http://www.clamav.net/%{name}-%{version}.tar.gz.sig
 Source2:	clamav-clamd.init
 Source3:	clamav-clamd.logrotate
 Source4:	clamav-freshclamd.init
@@ -150,7 +150,7 @@ files.
 
 %prep
 
-%setup -q -n %{name}-%{version}rc1
+%setup -q -n %{name}-%{version}
 
 # clean up
 for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type f -name .#\*` `find . -type d -name .svn`; do
@@ -185,11 +185,12 @@ export FFLAGS="$FFLAGS -fstack-protector-all"
 %endif
 
 %configure2_5x \
+    --localstatedir=/var/lib \
     --disable-rpath \
     --disable-%{name} \
     --with-user=%{name} \
     --with-group=%{name} \
-    --with-dbdir=%{_localstatedir}/lib/%{name} \
+    --with-dbdir=/var/lib/%{name} \
     --enable-id-check \
     --enable-clamuko \
     --enable-bigstack \
@@ -210,7 +211,7 @@ perl -pi -e "s|^sys_lib_dlsearch_path_spec=.*|sys_lib_dlsearch_path_spec=\"/%{_l
 %make 
 
 %install
-[ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
+rm -rf %{buildroot}
 
 %makeinstall_std
 
@@ -244,7 +245,7 @@ install -m644 etc/freshclam.conf %{buildroot}%{_sysconfdir}/freshclam.conf
 install -d %{buildroot}%{_var}/run/%{name}
 
 # fix TMPDIR
-install -d %{buildroot}%{_localstatedir}/lib/%{name}/tmp
+install -d %{buildroot}/var/lib/%{name}/tmp
 
 cat > README.qmail+qmail-scanner <<EOF
 #!/bin/sh
@@ -267,7 +268,7 @@ perl -pi -e "s|%{name} %{name}|qscand qscand|g" %{_sysconfdir}/logrotate.d/fresh
 perl -pi -e "s|^User %{name}|User qscand|g" %{_sysconfdir}/clamd.conf
 perl -pi -e "s|^DatabaseOwner %{name}|DatabaseOwner qscand|g" %{_sysconfdir}/freshclam.conf
 
-chown -R qscand:qscand %{_localstatedir}/lib/%{name}
+chown -R qscand:qscand /var/lib/%{name}
 chown -R qscand:qscand %{_var}/log/%{name}
 chown -R qscand:qscand %{_var}/run/%{name}
 
@@ -287,7 +288,7 @@ EOF
 %endif
 
 %pre
-%_pre_useradd %{name} %{_localstatedir}/lib/%{name} /bin/sh
+%_pre_useradd %{name} /var/lib/%{name} /bin/sh
 
 if ! [ -z "`getent group amavis`" ]; then
     gpasswd -a %{name} amavis
@@ -301,7 +302,7 @@ fi
 %_preun_service freshclam
 
 %pre -n clamd
-%_pre_useradd %{name} %{_localstatedir}/lib/%{name} /bin/sh
+%_pre_useradd %{name} /var/lib/%{name} /bin/sh
 
 %post -n clamd
 %_post_service clamd
@@ -322,7 +323,7 @@ fi
 %endif
 
 %pre -n %{name}-db
-%_pre_useradd %{name} %{_localstatedir}/lib/%{name} /bin/sh
+%_pre_useradd %{name} /var/lib/%{name} /bin/sh
 
 %post -n %{name}-db
 # try to keep most uptodate database
@@ -348,12 +349,12 @@ done
 %endif
 
 %clean
-[ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
+rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
 %doc AUTHORS BUGS ChangeLog FAQ NEWS README test UPGRADE
-%doc docs/*.pdf contrib/phishing
+%doc docs/*.pdf
 %doc README.qmail+qmail-scanner COPYING*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/freshclam.conf
@@ -375,7 +376,7 @@ done
 %exclude %{_mandir}/man8/%{name}-milter.8*
 %endif
 %dir %attr(0755,%{name},%{name}) %{_var}/run/%{name}
-%dir %attr(0755,%{name},%{name}) %{_localstatedir}/lib/%{name}
+%dir %attr(0755,%{name},%{name}) /var/lib/%{name}
 %dir %attr(0755,%{name},%{name}) %{_var}/log/%{name}
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/freshclam.log
 
@@ -399,10 +400,10 @@ done
 
 %files -n %{name}-db
 %defattr(-,root,root)
-%dir %attr(0755,%{name},%{name}) %{_localstatedir}/lib/%{name}
-%attr(0644,%{name},%{name}) %config(noreplace) %{_localstatedir}/lib/%{name}/daily.cvd
-%attr(0644,%{name},%{name}) %config(noreplace) %{_localstatedir}/lib/%{name}/main.cvd
-%dir %attr(0755,%{name},%{name}) %{_localstatedir}/lib/%{name}/tmp
+%dir %attr(0755,%{name},%{name}) /var/lib/%{name}
+%attr(0644,%{name},%{name}) %config(noreplace) /var/lib/%{name}/daily.cvd
+%attr(0644,%{name},%{name}) %config(noreplace) /var/lib/%{name}/main.cvd
+%dir %attr(0755,%{name},%{name}) /var/lib/%{name}/tmp
 
 %files -n %{libname}
 %defattr(-,root,root)
