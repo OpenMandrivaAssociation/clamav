@@ -4,7 +4,7 @@
 %{?!mkrel:%define mkrel(c:) %{-c: 0.%{-c*}.}%{!?_with_unstable:%(perl -e '$_="%{1}";m/(.\*\\D\+)?(\\d+)$/;$rel=${2}-1;re;print "$1$rel";').%{?subrel:%subrel}%{!?subrel:1}.%{?distversion:%distversion}%{?!distversion:%(echo $[%{mdkversion}/10])}}%{?_with_unstable:%{1}}%{?distsuffix:%distsuffix}%{?!distsuffix:mdk}}
 %endif
 
-%define	major 4
+%define	major 5
 %define libname %mklibname %{name} %{major}
 %define develname %mklibname %{name} -d
 
@@ -19,7 +19,7 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.93.3
+Version:	0.94
 Release:	%mkrel 1
 License:	GPL
 Group:		File tools
