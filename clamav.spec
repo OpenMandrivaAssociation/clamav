@@ -20,7 +20,7 @@
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.94.1
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -173,6 +173,10 @@ cp %{SOURCE7} Mandriva/clamav-milter.sysconfig
 #libtoolize --copy --force; aclocal; autoconf; automake
 #%%endif
 %if %mdkversion == 300
+%define __libtoolize /bin/true
+%endif
+
+%if %mdkversion == 200600
 %define __libtoolize /bin/true
 %endif
 
