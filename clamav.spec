@@ -19,8 +19,8 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.94.1
-Release:	%mkrel 3
+Version:	0.94.2
+Release:	%mkrel 1
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -65,13 +65,13 @@ BuildRequires:	gcc-c++ >= 4.0.1-5.1.20060
 %endif
 Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
-%description 
+%description
 Clam AntiVirus is an anti-virus toolkit for Unix. The main purpose of this
 software is the integration with mail seversions (attachment scanning). The
 package provides a flexible and scalable multi-threaded daemon, a commandline
 scanner, and a tool for automatic updating via Internet. The programs are based
 on a shared library distributed with the Clam AntiVirus package, which you can
-use in your own software. 
+use in your own software.
 
 You can build %{name} with some conditional build swithes;
 
@@ -208,7 +208,7 @@ export FFLAGS="$FFLAGS -fstack-protector-all"
     --enable-milter --with-tcpwrappers \
 %else
     --disable-milter --without-tcpwrappers \
-%endif			
+%endif
 
 #    --enable-experimental
 #    --enable-debug \
@@ -216,7 +216,7 @@ export FFLAGS="$FFLAGS -fstack-protector-all"
 # anti rpath hack
 perl -pi -e "s|^sys_lib_dlsearch_path_spec=.*|sys_lib_dlsearch_path_spec=\"/%{_lib} %{_libdir}\"|g" libtool
 
-%make 
+%make
 
 %install
 rm -rf %{buildroot}
