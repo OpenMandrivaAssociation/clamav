@@ -13,14 +13,14 @@
 %{?_with_milter:   %{expand: %%global milter 1}}
 %{?_without_milter:   %{expand: %%global milter 0}}
 
-%if %mdkversion <= 200800
+%if %mdkversion <= 200900
 %define subrel 1
 %endif
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.94.2
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
