@@ -8,7 +8,7 @@
 %define libname %mklibname %{name} %{major}
 %define develname %mklibname %{name} -d
 
-%define milter	0
+%define milter	1
 
 %{?_with_milter:   %{expand: %%global milter 1}}
 %{?_without_milter:   %{expand: %%global milter 0}}
@@ -20,7 +20,7 @@
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.94.2
-Release:	%mkrel 3
+Release:	%mkrel 4
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -33,6 +33,8 @@ Source5:	clamav-freshclam.logrotate
 Source6:	clamav-milter.init
 Source7:	clamav-milter.sysconfig
 Patch0:		clamav-mdv_conf.diff
+Patch1:		clamav-0.94.2-build_and_linkage_fix.diff
+Patch2:		clamav-0.94.2-format_not_a_string_literal_and_no_format_arguments.diff
 Requires(post): clamav-db
 Requires(preun): clamav-db
 Requires(post): %{libname} = %{version}
@@ -96,11 +98,10 @@ The Clam AntiVirus Daemon
 
 %if %{milter}
 %package -n	%{name}-milter
-Summary:	The Clam AntiVirus sendmail-milter Daemon
+Summary:	The Clam AntiVirus milter Daemon
 Group:		System/Servers
 Requires:	%{name} = %{version}
 Requires:	clamd = %{version}
-Requires:	sendmail
 Requires:	tcp_wrappers
 Requires(post): clamav-db
 Requires(preun): clamav-db
@@ -112,7 +113,7 @@ Requires(pre): rpm-helper
 Requires(postun): rpm-helper
 
 %description -n	%{name}-milter
-The Clam AntiVirus sendmail-milter Daemon
+The Clam AntiVirus milter Daemon
 %endif
 
 %package -n	%{name}-db
@@ -158,6 +159,8 @@ for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type 
 done
 
 %patch0 -p1 -b .mdvconf
+%patch1 -p1 -b .build_and_linkage_fix
+%patch2 -p0 -b .format_not_a_string_literal_and_no_format_arguments
 
 mkdir -p Mandriva
 cp %{SOURCE2} Mandriva/clamav-clamd.init
