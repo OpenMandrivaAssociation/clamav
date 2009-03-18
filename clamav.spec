@@ -1,3 +1,6 @@
+# due to https://qa.mandriva.com/show_bug.cgi?id=48633
+%define Werror_cflags %nil
+
 %if %mdkversion == 300
 %define distversion C30
 #compatability macros:
@@ -20,7 +23,7 @@
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.94.2
-Release:	%mkrel 4
+Release:	%mkrel 5
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -34,7 +37,6 @@ Source6:	clamav-milter.init
 Source7:	clamav-milter.sysconfig
 Patch0:		clamav-mdv_conf.diff
 Patch1:		clamav-0.94.2-build_and_linkage_fix.diff
-Patch2:		clamav-0.94.2-format_not_a_string_literal_and_no_format_arguments.diff
 Requires(post): clamav-db
 Requires(preun): clamav-db
 Requires(post): %{libname} = %{version}
@@ -160,7 +162,6 @@ done
 
 %patch0 -p1 -b .mdvconf
 %patch1 -p1 -b .build_and_linkage_fix
-%patch2 -p0 -b .format_not_a_string_literal_and_no_format_arguments
 
 mkdir -p Mandriva
 cp %{SOURCE2} Mandriva/clamav-clamd.init
