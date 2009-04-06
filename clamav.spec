@@ -1,13 +1,10 @@
-# due to https://qa.mandriva.com/show_bug.cgi?id=48633
-%define Werror_cflags %nil
-
 %if %mdkversion == 300
 %define distversion C30
 #compatability macros:
 %{?!mkrel:%define mkrel(c:) %{-c: 0.%{-c*}.}%{!?_with_unstable:%(perl -e '$_="%{1}";m/(.\*\\D\+)?(\\d+)$/;$rel=${2}-1;re;print "$1$rel";').%{?subrel:%subrel}%{!?subrel:1}.%{?distversion:%distversion}%{?!distversion:%(echo $[%{mdkversion}/10])}}%{?_with_unstable:%{1}}%{?distsuffix:%distsuffix}%{?!distsuffix:mdk}}
 %endif
 
-%define	major 5
+%define	major 6
 %define libname %mklibname %{name} %{major}
 %define develname %mklibname %{name} -d
 
@@ -22,13 +19,22 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.94.2
-Release:	%mkrel 5
+Version:	0.95
+Release:	%mkrel 1
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
-Source0:	http://www.clamav.net/%{name}-%{version}.tar.gz
-Source1:	http://www.clamav.net/%{name}-%{version}.tar.gz.sig
+#Source0:	http://www.clamav.net/%{name}-%{version}.tar.gz
+#Source1:	http://www.clamav.net/%{name}-%{version}.tar.gz.sig
+# clamav-0.95+ bundles support for RAR v3 in "libclamav" without permission,
+# from Eugene Roshal of RARlabs. There is also patent issues involved.
+#
+# https://bugzilla.redhat.com/show_bug.cgi?id=334371
+# http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=312552
+#
+# Both Redhat and debian removes this code from the upstream tar ball
+# and repackages it.
+Source0:	%{name}-%{version}-norar.tar.bz2
 Source2:	clamav-clamd.init
 Source3:	clamav-clamd.logrotate
 Source4:	clamav-freshclamd.init
@@ -36,7 +42,13 @@ Source5:	clamav-freshclam.logrotate
 Source6:	clamav-milter.init
 Source7:	clamav-milter.sysconfig
 Patch0:		clamav-mdv_conf.diff
-Patch1:		clamav-0.94.2-build_and_linkage_fix.diff
+Patch1:		clamav-0.95-linkage_fix.diff
+Patch2:		clamav-0.95-build_fix.diff
+Patch3:		clamav-0.95-MaxQueue_fix.diff
+Patch10:	clamav-0.92-private.patch
+Patch11:	clamav-0.92-open.patch
+Patch12:	clamav-0.95-cliopts.patch
+Patch13:	clamav-0.95rc1-umask.patch
 Requires(post): clamav-db
 Requires(preun): clamav-db
 Requires(post): %{libname} = %{version}
@@ -45,20 +57,20 @@ Requires(post): rpm-helper
 Requires(preun): rpm-helper
 Requires(pre): rpm-helper
 Requires(postun): rpm-helper
-BuildRequires:	bzip2-devel
 BuildRequires:	bc
-BuildRequires:	gmp-devel
+BuildRequires:	bzip2-devel
+BuildRequires:	curl-devel
+BuildRequires:	ncurses-devel
+BuildRequires:	tommath-devel
+BuildRequires:	zlib-devel
 %if %mdkversion >= 1000
 BuildRequires:	autoconf2.5
 BuildRequires:	automake1.7
 %endif
 %if %{milter}
-BuildRequires:	sendmail
 BuildRequires:	sendmail-devel
 BuildRequires:	tcp_wrappers-devel
 %endif
-BuildRequires:	zlib-devel
-BuildRequires:	gmp-devel
 %if %mdkversion >= 1020
 BuildRequires:	multiarch-utils >= 1.0.3
 %endif
@@ -161,7 +173,17 @@ for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type 
 done
 
 %patch0 -p1 -b .mdvconf
-%patch1 -p1 -b .build_and_linkage_fix
+%patch1 -p1 -b .linkage_fix
+%patch2 -p1 -b .build_fix
+%patch3 -p0 -b .MaxQueue_fix
+
+%patch10 -p1 -b .private
+%patch11 -p1 -b .open
+%patch12 -p1 -b .cliopts
+%patch13 -p1 -b .umask
+
+mkdir -p libclamunrar{,_iface}
+touch libclamunrar/{Makefile.in,all,install}
 
 mkdir -p Mandriva
 cp %{SOURCE2} Mandriva/clamav-clamd.init
@@ -196,6 +218,11 @@ export CXXFLAGS="$CXXFLAGS -fstack-protector-all"
 export FFLAGS="$FFLAGS -fstack-protector-all"
 %endif
 
+export CFLAGS="$CFLAGS -I%{_includedir}/tommath"
+
+# IPv6 check is buggy and does not work when there are no IPv6 interface on build machine
+export have_cv_ipv6=yes
+
 %configure2_5x \
     --localstatedir=/var/lib \
     --disable-rpath \
@@ -203,19 +230,22 @@ export FFLAGS="$FFLAGS -fstack-protector-all"
     --with-user=%{name} \
     --with-group=%{name} \
     --with-dbdir=/var/lib/%{name} \
+    --disable-rpath \
+    --disable-zlib-vcheck \
+    --disable-unrar \
+    --enable-clamdtop \
     --enable-id-check \
     --enable-clamuko \
     --enable-bigstack \
     --with-zlib=%{_prefix} \
+    --with-libbz2-prefix=%{_prefix} \
     --disable-zlib-vcheck \
+    --with-system-tommath \
 %if %{milter}
     --enable-milter --with-tcpwrappers \
 %else
     --disable-milter --without-tcpwrappers \
 %endif
-
-#    --enable-experimental
-#    --enable-debug \
 
 # anti rpath hack
 perl -pi -e "s|^sys_lib_dlsearch_path_spec=.*|sys_lib_dlsearch_path_spec=\"/%{_lib} %{_libdir}\"|g" libtool
@@ -295,6 +325,14 @@ fi
 # Regards // Oden Eriksson
 EOF
 
+cat > README.urpmi << EOF
+clamav-0.95+ bundles support for RAR v3 in "libclamav" without permission,
+from Eugene Roshal of RARlabs. There is also patent issues involved.
+
+Therefore Mandriva has been forced to remove the offending code.
+EOF
+
+
 %if %mdkversion >= 1020
 %multiarch_binaries %{buildroot}%{_bindir}/clamav-config
 %endif
@@ -365,25 +403,27 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS BUGS ChangeLog FAQ NEWS README test UPGRADE
+%doc AUTHORS BUGS ChangeLog FAQ NEWS README test UPGRADE README.urpmi
 %doc docs/*.pdf
 %doc README.qmail+qmail-scanner COPYING*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/freshclam.conf
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/freshclam
 %attr(0755,root,root) %{_initrddir}/freshclam
-%{_bindir}/clamscan
-%{_bindir}/clamdscan
 %{_bindir}/clamconf
+%{_bindir}/clamdscan
+%{_bindir}/clamdtop
+%{_bindir}/clamscan
 %{_bindir}/freshclam
 %{_bindir}/sigtool
-%{_mandir}/man1/sigtool.1*
 %{_mandir}/man1/clamconf.1.*
 %{_mandir}/man1/clamdscan.1*
+%{_mandir}/man1/clamdtop.1*
 %{_mandir}/man1/clamscan.1*
 %{_mandir}/man1/freshclam.1*
-%{_mandir}/man5/freshclam.conf.5*
+%{_mandir}/man1/sigtool.1*
 %{_mandir}/man5/clamd.conf.5*
+%{_mandir}/man5/freshclam.conf.5*
 %if !%{milter}
 %exclude %{_mandir}/man8/%{name}-milter.8*
 %endif
@@ -403,7 +443,7 @@ rm -rf %{buildroot}
 %if %{milter}
 %files -n %{name}-milter
 %defattr(-,root,root)
-%doc %{name}-milter/INSTALL
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamav-milter.conf
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/sysconfig/%{name}-milter
 %attr(0755,root,root) %{_initrddir}/%{name}-milter
 %{_sbindir}/%{name}-milter
