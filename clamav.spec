@@ -19,7 +19,7 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.95
+Version:	0.95.1
 Release:	%mkrel 1
 License:	GPL
 Group:		File tools
@@ -44,7 +44,6 @@ Source7:	clamav-milter.sysconfig
 Patch0:		clamav-mdv_conf.diff
 Patch1:		clamav-0.95-linkage_fix.diff
 Patch2:		clamav-0.95-build_fix.diff
-Patch3:		clamav-0.95-MaxQueue_fix.diff
 Patch10:	clamav-0.92-private.patch
 Patch11:	clamav-0.92-open.patch
 Patch12:	clamav-0.95-cliopts.patch
@@ -175,7 +174,6 @@ done
 %patch0 -p1 -b .mdvconf
 %patch1 -p1 -b .linkage_fix
 %patch2 -p1 -b .build_fix
-%patch3 -p0 -b .MaxQueue_fix
 
 %patch10 -p1 -b .private
 %patch11 -p1 -b .open
