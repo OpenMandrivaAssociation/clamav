@@ -41,6 +41,7 @@ Source4:	clamav-freshclamd.init
 Source5:	clamav-freshclam.logrotate
 Source6:	clamav-milter.init
 Source7:	clamav-milter.sysconfig
+Source8:	clamav-milter.logrotate
 Patch0:		clamav-mdv_conf.diff
 Patch1:		clamav-0.95-linkage_fix.diff
 Patch2:		clamav-0.95-build_fix.diff
@@ -190,6 +191,7 @@ cp %{SOURCE4} Mandriva/clamav-freshclamd.init
 cp %{SOURCE5} Mandriva/clamav-freshclam.logrotate
 cp %{SOURCE6} Mandriva/clamav-milter.init
 cp %{SOURCE7} Mandriva/clamav-milter.sysconfig
+cp %{SOURCE8} Mandriva/clamav-milter.logrotate
 
 %build
 #%%if %mdkversion > 1000
@@ -273,9 +275,17 @@ install -d %{buildroot}%{_sysconfdir}/logrotate.d
 install -m644 Mandriva/clamav-clamd.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/clamd
 install -m644 Mandriva/clamav-freshclam.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/freshclam
 
+%if %{milter}
+install -m644 Mandriva/clamav-milter.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/clamav-milter
+%endif
+
 install -d %{buildroot}%{_var}/log/%{name}
 touch %{buildroot}%{_var}/log/%{name}/freshclam.log
 touch %{buildroot}%{_var}/log/%{name}/clamd.log
+
+%if %{milter}
+touch %{buildroot}%{_var}/log/%{name}/clamav-milter.log
+%endif
 
 # install config files
 install -m644 etc/clamd.conf %{buildroot}%{_sysconfdir}/clamd.conf
@@ -365,6 +375,7 @@ fi
 %if %{milter}
 %post -n %{name}-milter
 %_post_service %{name}-milter
+%create_ghostfile %{_var}/log/%{name}/clamav-milter.log %{name} %{name} 0644
 
 %preun -n %{name}-milter
 %_preun_service %{name}-milter
@@ -427,7 +438,7 @@ rm -rf %{buildroot}
 %endif
 %dir %attr(0755,%{name},%{name}) %{_var}/run/%{name}
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}
-%dir %attr(0755,%{name},%{name}) %{_var}/log/%{name}
+%dir %attr(0775,%{name},%{name}) %{_var}/log/%{name}
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/freshclam.log
 
 %files -n clamd
@@ -443,9 +454,11 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamav-milter.conf
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/sysconfig/%{name}-milter
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/clamav-milter
 %attr(0755,root,root) %{_initrddir}/%{name}-milter
 %{_sbindir}/%{name}-milter
 %{_mandir}/man8/%{name}-milter.8*
+%ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/clamav-milter.log
 %endif
 
 %files -n %{name}-db
