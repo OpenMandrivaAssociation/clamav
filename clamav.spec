@@ -20,7 +20,7 @@
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.95.1
-Release:	%mkrel 2
+Release:	%mkrel 3
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -42,6 +42,8 @@ Source5:	clamav-freshclam.logrotate
 Source6:	clamav-milter.init
 Source7:	clamav-milter.sysconfig
 Source8:	clamav-milter.logrotate
+Source9:	clamav-clamd.sysconfig
+Source10:	clamav-freshclam.sysconfig
 Patch0:		clamav-mdv_conf.diff
 Patch1:		clamav-0.95-linkage_fix.diff
 Patch2:		clamav-0.95-build_fix.diff
@@ -192,6 +194,8 @@ cp %{SOURCE5} Mandriva/clamav-freshclam.logrotate
 cp %{SOURCE6} Mandriva/clamav-milter.init
 cp %{SOURCE7} Mandriva/clamav-milter.sysconfig
 cp %{SOURCE8} Mandriva/clamav-milter.logrotate
+cp %{SOURCE9} Mandriva/clamav-clamd.sysconfig
+cp %{SOURCE10} Mandriva/clamav-freshclam.sysconfig
 
 %build
 #%%if %mdkversion > 1000
@@ -269,6 +273,11 @@ install -m755 Mandriva/clamav-milter.init %{buildroot}%{_initrddir}/clamav-milte
 install -d %{buildroot}%{_sysconfdir}/sysconfig
 install -m644 Mandriva/clamav-milter.sysconfig %{buildroot}%{_sysconfdir}/sysconfig/%{name}-milter
 %endif
+
+# install config files
+install -d %{buildroot}%{_sysconfdir}/sysconfig
+install -m0644 Mandriva/clamav-clamd.sysconfig %{buildroot}%{_sysconfdir}/sysconfig/clamd
+install -m0644 Mandriva/clamav-freshclam.sysconfig %{buildroot}%{_sysconfdir}/sysconfig/freshclam
 
 # install the logrotate stuff
 install -d %{buildroot}%{_sysconfdir}/logrotate.d
@@ -418,6 +427,7 @@ rm -rf %{buildroot}
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/freshclam.conf
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/freshclam
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/sysconfig/freshclam
 %attr(0755,root,root) %{_initrddir}/freshclam
 %{_bindir}/clamconf
 %{_bindir}/clamdscan
@@ -444,6 +454,7 @@ rm -rf %{buildroot}
 %files -n clamd
 %defattr(-,root,root)
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/clamd
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/sysconfig/clamd
 %attr(0755,root,root) %{_initrddir}/clamd
 %{_sbindir}/clamd
 %{_mandir}/man8/clamd.8*
