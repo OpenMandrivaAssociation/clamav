@@ -421,7 +421,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS BUGS ChangeLog FAQ NEWS README test UPGRADE README.urpmi
+%doc AUTHORS BUGS FAQ NEWS README test UPGRADE README.urpmi
 %doc docs/*.pdf
 %doc README.qmail+qmail-scanner COPYING*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf
