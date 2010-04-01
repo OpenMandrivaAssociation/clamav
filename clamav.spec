@@ -1,9 +1,3 @@
-%if %mdkversion == 300
-%define distversion C30
-#compatability macros:
-%{?!mkrel:%define mkrel(c:) %{-c: 0.%{-c*}.}%{!?_with_unstable:%(perl -e '$_="%{1}";m/(.\*\\D\+)?(\\d+)$/;$rel=${2}-1;re;print "$1$rel";').%{?subrel:%subrel}%{!?subrel:1}.%{?distversion:%distversion}%{?!distversion:%(echo $[%{mdkversion}/10])}}%{?_with_unstable:%{1}}%{?distsuffix:%distsuffix}%{?!distsuffix:mdk}}
-%endif
-
 %define	major 6
 %define libname %mklibname %{name} %{major}
 %define develname %mklibname %{name} -d
@@ -13,14 +7,17 @@
 %{?_with_milter:   %{expand: %%global milter 1}}
 %{?_without_milter:   %{expand: %%global milter 0}}
 
-%if %mdkversion <= 200900
+%if %mdkversion <= 201010
 %define subrel 1
+%define release %mkrel 0
+%else
+%define release %mkrel 1
 %endif
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.95.3
-Release:	%mkrel 1
+Version:	0.96
+Release:	%release
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -65,16 +62,9 @@ BuildRequires:	curl-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	tommath-devel
 BuildRequires:	zlib-devel
-%if %mdkversion >= 1000
-BuildRequires:	autoconf2.5
-BuildRequires:	automake1.7
-%endif
 %if %{milter}
 BuildRequires:	sendmail-devel
 BuildRequires:	tcp_wrappers-devel
-%endif
-%if %mdkversion >= 1020
-BuildRequires:	multiarch-utils >= 1.0.3
 %endif
 Conflicts:	clamd < 0.91
 %if %mdkversion == 200600
@@ -198,29 +188,11 @@ cp %{SOURCE9} Mandriva/clamav-clamd.sysconfig
 cp %{SOURCE10} Mandriva/clamav-freshclam.sysconfig
 
 %build
-#%%if %mdkversion > 1000
-#export WANT_AUTOCONF_2_5=1
-#libtoolize --copy --force; aclocal; autoconf; automake
-#%%endif
-%if %mdkversion == 300
-%define __libtoolize /bin/true
-%endif
-
 %if %mdkversion == 200600
 %define __libtoolize /bin/true
 %endif
 
-%if %mdkversion == 200710
-%define __libtoolize /bin/true
-%endif
-
 %serverbuild
-
-%if %mdkversion == 200710
-export CFLAGS="$CFLAGS -fstack-protector-all"
-export CXXFLAGS="$CXXFLAGS -fstack-protector-all"
-export FFLAGS="$FFLAGS -fstack-protector-all"
-%endif
 
 export CFLAGS="$CFLAGS -I%{_includedir}/tommath"
 
@@ -349,10 +321,7 @@ from Eugene Roshal of RARlabs. There is also patent issues involved.
 Therefore Mandriva has been forced to remove the offending code.
 EOF
 
-
-%if %mdkversion >= 1020
 %multiarch_binaries %{buildroot}%{_bindir}/clamav-config
-%endif
 
 %pre
 %_pre_useradd %{name} /var/lib/%{name} /bin/sh
@@ -429,6 +398,7 @@ rm -rf %{buildroot}
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/freshclam
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/sysconfig/freshclam
 %attr(0755,root,root) %{_initrddir}/freshclam
+%{_bindir}/clambc
 %{_bindir}/clamconf
 %{_bindir}/clamdscan
 %{_bindir}/clamdtop
@@ -485,12 +455,9 @@ rm -rf %{buildroot}
 
 %files -n %{develname}
 %defattr(-,root,root)
-%if %mdkversion >= 1020
 %multiarch %{multiarch_bindir}/clamav-config
-%endif
 %{_bindir}/clamav-config
 %{_includedir}/*
-%{_libdir}/*.a
 %{_libdir}/*.so
-%{_libdir}/*.la
+%{_libdir}/*.*a
 %{_libdir}/pkgconfig/libclamav.pc
