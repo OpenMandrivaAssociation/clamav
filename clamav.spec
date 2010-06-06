@@ -7,7 +7,7 @@
 %{?_with_milter:   %{expand: %%global milter 1}}
 %{?_without_milter:   %{expand: %%global milter 0}}
 
-%if %mdkversion <= 201010
+%if %mdkversion < 201010
 %define subrel 1
 %define release %mkrel 0
 %else
