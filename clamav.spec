@@ -16,12 +16,12 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.96
+Version:	0.96.1
 Release:	%release
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
-#Source0:	http://www.clamav.net/%{name}-%{version}.tar.gz
+Source0:	http://www.clamav.net/%{name}-%{version}.tar.gz
 #Source1:	http://www.clamav.net/%{name}-%{version}.tar.gz.sig
 # clamav-0.95+ bundles support for RAR v3 in "libclamav" without permission,
 # from Eugene Roshal of RARlabs. There is also patent issues involved.
@@ -31,7 +31,7 @@ URL:		http://clamav.sourceforge.net/
 #
 # Both Redhat and debian removes this code from the upstream tar ball
 # and repackages it.
-Source0:	%{name}-%{version}-norar.tar.bz2
+# Source0:	%{name}-%{version}-norar.tar.bz2
 Source2:	clamav-clamd.init
 Source3:	clamav-clamd.logrotate
 Source4:	clamav-freshclamd.init
@@ -439,6 +439,7 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_initrddir}/%{name}-milter
 %{_sbindir}/%{name}-milter
 %{_mandir}/man8/%{name}-milter.8*
+%{_mandir}/man5/%{name}-milter.conf.5*
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/clamav-milter.log
 %endif
 
