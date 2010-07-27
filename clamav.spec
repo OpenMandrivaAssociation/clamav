@@ -8,10 +8,10 @@
 %{?_without_milter:   %{expand: %%global milter 0}}
 
 %if %mdkversion < 201010
-%define subrel 1
+%define subrel 2
 %define release %mkrel 0
 %else
-%define release %mkrel 1
+%define release %mkrel 2
 %endif
 
 Summary:	An anti-virus utility for Unix
@@ -21,7 +21,6 @@ Release:	%release
 License:	GPL
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
-Source0:	http://www.clamav.net/%{name}-%{version}.tar.gz
 #Source1:	http://www.clamav.net/%{name}-%{version}.tar.gz.sig
 # clamav-0.95+ bundles support for RAR v3 in "libclamav" without permission,
 # from Eugene Roshal of RARlabs. There is also patent issues involved.
@@ -31,7 +30,7 @@ Source0:	http://www.clamav.net/%{name}-%{version}.tar.gz
 #
 # Both Redhat and debian removes this code from the upstream tar ball
 # and repackages it.
-# Source0:	%{name}-%{version}-norar.tar.bz2
+Source0:	%{name}-%{version}-norar.tar.bz2
 Source2:	clamav-clamd.init
 Source3:	clamav-clamd.logrotate
 Source4:	clamav-freshclamd.init
@@ -172,6 +171,12 @@ done
 %patch11 -p1 -b .open
 %patch12 -p1 -b .cliopts
 %patch13 -p1 -b .umask
+
+# we can't ship libclamunrar
+if [ -d libclamunrar ]; then
+    echo "delete the libclamunrar directory and repackage the tar ball"
+    exit 1
+fi
 
 mkdir -p libclamunrar{,_iface}
 touch libclamunrar/{Makefile.in,all,install}
