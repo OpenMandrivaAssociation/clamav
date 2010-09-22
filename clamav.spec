@@ -7,11 +7,13 @@
 %{?_with_milter:   %{expand: %%global milter 1}}
 %{?_without_milter:   %{expand: %%global milter 0}}
 
-%if %mdkversion < 201010
+%if %mandriva_branch == Cooker
+# Cooker
+%define release %mkrel 2
+%else
+# Old distros
 %define subrel 1
 %define release %mkrel 0
-%else
-%define release %mkrel 1
 %endif
 
 Summary:	An anti-virus utility for Unix
