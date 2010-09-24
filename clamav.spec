@@ -208,7 +208,6 @@ export have_cv_ipv6=yes
 
 %configure2_5x \
     --localstatedir=/var/lib \
-    --disable-rpath \
     --disable-%{name} \
     --with-user=%{name} \
     --with-group=%{name} \
@@ -222,7 +221,6 @@ export have_cv_ipv6=yes
     --enable-bigstack \
     --with-zlib=%{_prefix} \
     --with-libbz2-prefix=%{_prefix} \
-    --disable-zlib-vcheck \
     --with-system-tommath \
 %if %{milter}
     --enable-milter --with-tcpwrappers \
