@@ -18,7 +18,7 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.97
+Version:	0.97.1
 Release:	%release
 License:	GPL
 Group:		File tools
@@ -410,6 +410,7 @@ rm -rf %{buildroot}
 %{_bindir}/clamscan
 %{_bindir}/freshclam
 %{_bindir}/sigtool
+%{_mandir}/man1/clambc.1*
 %{_mandir}/man1/clamconf.1.*
 %{_mandir}/man1/clamdscan.1*
 %{_mandir}/man1/clamdtop.1*
