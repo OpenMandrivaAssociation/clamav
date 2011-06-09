@@ -462,7 +462,7 @@ rm -rf %{buildroot}
 
 %files -n %{develname}
 %defattr(-,root,root)
-%multiarch %{multiarch_bindir}/clamav-config
+%{multiarch_bindir}/clamav-config
 %{_bindir}/clamav-config
 %{_includedir}/*
 %{_libdir}/*.so
