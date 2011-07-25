@@ -32,7 +32,7 @@ URL:		http://clamav.sourceforge.net/
 #
 # Both Redhat and debian removes this code from the upstream tar ball
 # and repackages it.
-Source0:	%{name}-%{version}-norar.tar.bz2
+Source0:	%{name}-%{version}-norar.tar.gz
 Source2:	clamav-clamd.init
 Source3:	clamav-clamd.logrotate
 Source4:	clamav-freshclamd.init
