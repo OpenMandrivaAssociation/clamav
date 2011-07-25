@@ -45,7 +45,7 @@ Source10:	clamav-freshclam.sysconfig
 Patch0:		clamav-mdv_conf.diff
 Patch1:		clamav-0.95-linkage_fix.diff
 Patch2:		clamav-0.95-build_fix.diff
-Patch10:	clamav-0.92-private.patch
+Patch10:	clamav-0.97.2-private.patch
 Patch11:	clamav-0.92-open.patch
 Patch12:	clamav-0.95-cliopts.patch
 Patch13:	clamav-0.95rc1-umask.patch
