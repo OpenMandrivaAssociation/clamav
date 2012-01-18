@@ -9,7 +9,7 @@
 
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 1
+%define release %mkrel 2
 %else
 # Old distros
 %define subrel 1
@@ -51,8 +51,8 @@ Patch12:	clamav-0.95-cliopts.patch
 Patch13:	clamav-0.95rc1-umask.patch
 Requires(post): clamav-db
 Requires(preun): clamav-db
-Requires(post): %{libname} = %{version}
-Requires(preun): %{libname} = %{version}
+Requires(post): %{libname} >= %{version}
+Requires(preun): %{libname} >= %{version}
 Requires(post): rpm-helper
 Requires(preun): rpm-helper
 Requires(pre): rpm-helper
@@ -67,12 +67,6 @@ BuildRequires:	zlib-devel
 BuildRequires:	sendmail-devel
 BuildRequires:	tcp_wrappers-devel
 %endif
-Conflicts:	clamd < 0.91
-%if %mdkversion == 200600
-BuildRequires:	gcc-cpp >= 4.0.1-5.1.20060
-BuildRequires:	gcc-c++ >= 4.0.1-5.1.20060
-%endif
-Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 Clam AntiVirus is an anti-virus toolkit for Unix. The main purpose of this
@@ -90,11 +84,11 @@ You can build %{name} with some conditional build swithes;
 %package -n	clamd
 Summary:	The Clam AntiVirus Daemon
 Group:		System/Servers
-Requires:	%{name} = %{version}
+Requires:	%{name} >= %{version}
 Requires(post): clamav-db
 Requires(preun): clamav-db
-Requires(post): %{libname} = %{version}
-Requires(preun): %{libname} = %{version}
+Requires(post): %{libname} >= %{version}
+Requires(preun): %{libname} >= %{version}
 Requires(post): rpm-helper
 Requires(preun): rpm-helper
 Requires(pre): rpm-helper
@@ -107,13 +101,13 @@ The Clam AntiVirus Daemon
 %package -n	%{name}-milter
 Summary:	The Clam AntiVirus milter Daemon
 Group:		System/Servers
-Requires:	%{name} = %{version}
-Requires:	clamd = %{version}
+Requires:	%{name} >= %{version}
+Requires:	clamd >= %{version}
 Requires:	tcp_wrappers
 Requires(post): clamav-db
 Requires(preun): clamav-db
-Requires(post): %{libname} = %{version}
-Requires(preun): %{libname} = %{version}
+Requires(post): %{libname} >= %{version}
+Requires(preun): %{libname} >= %{version}
 Requires(post): rpm-helper
 Requires(preun): rpm-helper
 Requires(pre): rpm-helper
@@ -126,7 +120,7 @@ The Clam AntiVirus milter Daemon
 %package -n	%{name}-db
 Summary:	Virus database for %{name}
 Group:		Databases
-Requires:	%{name} = %{version}
+Requires:	%{name} >= %{version}
 Requires(post): rpm-helper
 Requires(preun): rpm-helper
 Requires(pre): rpm-helper
@@ -145,7 +139,7 @@ Shared libraries for %{name}
 %package -n	%{develname}
 Summary:	Development library and header files for the %{name} library
 Group:		Development/C
-Requires:	%{libname} = %{version}
+Requires:	%{libname} >= %{version}
 Provides:	%{name}-devel = %{version}-%{release}
 Obsoletes:	%{name}-devel
 Obsoletes:	%{mklibname clamav 1 -d}
@@ -153,8 +147,8 @@ Obsoletes:	%{mklibname clamav 2 -d}
 Obsoletes:	%{mklibname clamav 3 -d}
 
 %description -n	%{develname}
-This package contains the static %{libname} library and its header
-files.
+This package contains the development library and header files for the 
+%{name} library.
 
 %prep
 
@@ -195,10 +189,6 @@ cp %{SOURCE9} Mandriva/clamav-clamd.sysconfig
 cp %{SOURCE10} Mandriva/clamav-freshclam.sysconfig
 
 %build
-%if %mdkversion == 200600
-%define __libtoolize /bin/true
-%endif
-
 %serverbuild
 
 export CFLAGS="$CFLAGS -I%{_includedir}/tommath"
@@ -328,6 +318,9 @@ EOF
 
 %multiarch_binaries %{buildroot}%{_bindir}/clamav-config
 
+# cleanup
+rm -f %{buildroot}%{_libdir}/*.*a
+
 %pre
 %_pre_useradd %{name} /var/lib/%{name} /bin/sh
 
@@ -382,19 +375,7 @@ done
 %postun -n %{name}-db
 %_postun_userdel %{name}
 
-%if %mdkversion < 200900
-%post -n %{libname} -p /sbin/ldconfig
-%endif
-
-%if %mdkversion < 200900
-%postun -n %{libname} -p /sbin/ldconfig
-%endif
-
-%clean
-rm -rf %{buildroot}
-
 %files
-%defattr(-,root,root)
 %doc AUTHORS BUGS FAQ NEWS README test UPGRADE README.urpmi
 %doc docs/*.pdf
 %doc README.qmail+qmail-scanner COPYING*
@@ -428,7 +409,6 @@ rm -rf %{buildroot}
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/freshclam.log
 
 %files -n clamd
-%defattr(-,root,root)
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/clamd
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/sysconfig/clamd
 %attr(0755,root,root) %{_initrddir}/clamd
@@ -438,7 +418,6 @@ rm -rf %{buildroot}
 
 %if %{milter}
 %files -n %{name}-milter
-%defattr(-,root,root)
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamav-milter.conf
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/sysconfig/%{name}-milter
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/clamav-milter
@@ -450,21 +429,17 @@ rm -rf %{buildroot}
 %endif
 
 %files -n %{name}-db
-%defattr(-,root,root)
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}
 %attr(0644,%{name},%{name}) %config(noreplace) /var/lib/%{name}/daily.cvd
 %attr(0644,%{name},%{name}) %config(noreplace) /var/lib/%{name}/main.cvd
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}/tmp
 
 %files -n %{libname}
-%defattr(-,root,root)
 %{_libdir}/*.so.%{major}*
 
 %files -n %{develname}
-%defattr(-,root,root)
 %{multiarch_bindir}/clamav-config
 %{_bindir}/clamav-config
 %{_includedir}/*
 %{_libdir}/*.so
-%{_libdir}/*.*a
 %{_libdir}/pkgconfig/libclamav.pc
