@@ -18,7 +18,7 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.97.4
+Version:	0.97.5
 Release:	%release
 License:	GPL
 Group:		File tools
