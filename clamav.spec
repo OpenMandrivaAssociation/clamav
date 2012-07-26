@@ -9,10 +9,10 @@
 
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 1
+%define release %mkrel 2
 %else
 # Old distros
-%define subrel 1
+%define subrel 2
 %define release %mkrel 0
 %endif
 
@@ -49,6 +49,8 @@ Patch10:	clamav-0.97.2-private.patch
 Patch11:	clamav-0.92-open.patch
 Patch12:	clamav-0.95-cliopts.patch
 Patch13:	clamav-0.95rc1-umask.patch
+# https://bugzilla.clamav.net/show_bug.cgi?id=5252
+Patch14:	clamav-0.97.5-bug5252.diff
 Requires(post): clamav-db
 Requires(preun): clamav-db
 Requires(post): %{libname} >= %{version}
@@ -167,6 +169,7 @@ done
 %patch11 -p1 -b .open
 %patch12 -p1 -b .cliopts
 %patch13 -p1 -b .umask
+%patch14 -p1 -b .bug5252
 
 # we can't ship libclamunrar
 if [ -d libclamunrar ]; then
