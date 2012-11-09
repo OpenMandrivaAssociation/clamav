@@ -1,0 +1,27 @@
+X-Git-Url: http://git.clamav.net/gitweb?p=clamav-devel.git;a=blobdiff_plain;f=libclamav%2Fscanners.c;h=b2ceebe683b2b8ddbab61c51e8b8453c20740e77;hp=e84d735c585b648be82e1b7760124f081a0112ed;hb=6a879ad98460303b23a6fc119769a3b463a902f8;hpb=5961eaef591de58a63923826fd347fd385dc4da2
+
+diff --git a/libclamav/scanners.c b/libclamav/scanners.c
+index e84d735..b2ceebe 100644
+--- a/libclamav/scanners.c
++++ b/libclamav/scanners.c
+@@ -2369,7 +2369,19 @@ static int magic_scandesc(int desc, cli_ctx *ctx, cli_file_t type)
+ 	    ctx->fmap--;
+ 	    cli_bitset_free(ctx->hook_lsig_matches);
+ 	    ctx->hook_lsig_matches = old_hook_lsig_matches;
+-	    ret_from_magicscan(ret);
++	    /* Same switch as end of magic_scandesc function */
++	    switch(ret) {
++		case CL_EFORMAT:
++		case CL_EMAXREC:
++		case CL_EMAXSIZE:
++		case CL_EMAXFILES:
++		    cli_dbgmsg("Descriptor[%d]: %s\n", desc, cl_strerror(ret));
++		case CL_CLEAN: /* here, only from cli_checkfp() */
++		    cache_add(hash, hashed_size, ctx);
++		    ret_from_magicscan(CL_CLEAN);
++		default:
++		    ret_from_magicscan(ret);
++	    }
+ 	}
+     }
+ 

@@ -1,0 +1,24 @@
+diff -Naurp clamav-0.95.3/freshclam/freshclam.c clamav-0.95.3.oden/freshclam/freshclam.c
+--- clamav-0.95.3/freshclam/freshclam.c	2009-10-28 16:34:13.000000000 +0100
++++ clamav-0.95.3.oden/freshclam/freshclam.c	2009-10-29 11:15:11.000000000 +0100
+@@ -102,7 +102,7 @@ static void writepid(const char *pidfile
+ {
+ 	FILE *fd;
+ 	int old_umask;
+-    old_umask = umask(0006);
++    old_umask = umask(0022);
+     if((fd = fopen(pidfile, "w")) == NULL) {
+ 	logg("!Can't save PID to file %s: %s\n", pidfile, strerror(errno));
+     } else {
+diff -Naurp clamav-0.95.3/shared/output.c clamav-0.95.3.oden/shared/output.c
+--- clamav-0.95.3/shared/output.c	2009-10-28 16:34:13.000000000 +0100
++++ clamav-0.95.3.oden/shared/output.c	2009-10-29 11:15:11.000000000 +0100
+@@ -270,7 +270,7 @@ int logg(const char *str, ...)
+ #endif
+     if(logg_file) {
+ 	if(!logg_fp) {
+-	    old_umask = umask(0037);
++	    old_umask = umask(0077);
+ 	    if((logg_fp = fopen(logg_file, "at")) == NULL) {
+ 		umask(old_umask);
+ #ifdef CL_THREAD_SAFE
