@@ -7,14 +7,8 @@
 %{?_with_milter:   %{expand: %%global milter 1}}
 %{?_without_milter:   %{expand: %%global milter 0}}
 
-%if %mandriva_branch == Cooker
-# Cooker
-%define release %mkrel 2
-%else
-# Old distros
-%define subrel 2
-%define release %mkrel 0
-%endif
+%define release %mkrel 1
+
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav

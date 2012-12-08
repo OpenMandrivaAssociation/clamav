@@ -1,0 +1,2 @@
+# pass additional options to clamd
+CLAMD_OPTIONS=""

@@ -1,0 +1,2 @@
+# pass additional options to freshclam
+FRESHCLAM_OPTIONS=""

@@ -1,11 +1,2 @@
 sources:
-  "clamav-0.97.5-norar.tar.gz:"	4d5b9c2ad3d71b7212253d00e659d5e68d390048
-  "clamav-clamd.init:"	4881d5fd77f71808cfa1e7b04b2fbc0e1d6cd264
-  "clamav-clamd.logrotate:"	eb56b04817e33c3247a52e585ae64fe672962802
-  "clamav-clamd.sysconfig:"	d88902a5cf666d25e257974b3ee69fe034bca18c
-  "clamav-freshclamd.init:"	79c70ea9b88efb47c4eab885caa28ff1b5b0051c
-  "clamav-freshclam.logrotate:"	9713cf165161f92a358a4fa2edb8b43311be53f3
-  "clamav-freshclam.sysconfig:"	3c8f31e0b54a6155d6fad69b80179a6ebfaec682
-  "clamav-milter.init:"	2d3bb50126c868a1b3c08d66986a8d7e372cfec5
-  "clamav-milter.logrotate:"	125bf9b379d9a3a40e5a2a6a02d1405df60eae40
-  "clamav-milter.sysconfig:"	dc59c0f01f3700d847166a824df8df8fc5c33710
+  "clamav-0.97.5-norar.tar.gz": 4d5b9c2ad3d71b7212253d00e659d5e68d390048

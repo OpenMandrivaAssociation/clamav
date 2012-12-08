@@ -1,0 +1,5 @@
+# You can tell clamav-milter to use arbitrary config file.
+# The default is: /etc/clamav-milter.conf
+
+#CLAMAV_FLAGS="--config-file=/etc/clamav-milter.conf"
+

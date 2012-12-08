@@ -1,0 +1,9 @@
+/var/log/clamav/clamav-milter.log {
+    create 644 clamav clamav
+    monthly
+    compress
+    missingok
+    postrotate
+	/sbin/service clamav-milter restart 2>/dev/null || true
+    endscript
+}
