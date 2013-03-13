@@ -1,22 +1,19 @@
-%define	major 6
+%define	major	6
 %define libname %mklibname %{name} %{major}
-%define develname %mklibname %{name} -d
+%define devname %mklibname %{name} -d
 
 %define milter	1
 
 %{?_with_milter:   %{expand: %%global milter 1}}
 %{?_without_milter:   %{expand: %%global milter 0}}
 
-%define release %mkrel 1
-
-
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.97.5
-Release:	%release
+Release:	1
 License:	GPL
 Group:		File tools
-URL:		http://clamav.sourceforge.net/
+Url:		http://clamav.sourceforge.net/
 #Source1:	http://www.clamav.net/%{name}-%{version}.tar.gz.sig
 # clamav-0.95+ bundles support for RAR v3 in "libclamav" without permission,
 # from Eugene Roshal of RARlabs. There is also patent issues involved.
@@ -45,24 +42,19 @@ Patch12:	clamav-0.95-cliopts.patch
 Patch13:	clamav-0.95rc1-umask.patch
 # https://bugzilla.clamav.net/show_bug.cgi?id=5252
 Patch14:	clamav-0.97.5-bug5252.diff
-Requires(post): clamav-db
-Requires(preun): clamav-db
-Requires(post): %{libname} >= %{version}
-Requires(preun): %{libname} >= %{version}
-Requires(post): rpm-helper
-Requires(preun): rpm-helper
-Requires(pre): rpm-helper
-Requires(postun): rpm-helper
+
 BuildRequires:	bc
 BuildRequires:	bzip2-devel
-BuildRequires:	curl-devel
-BuildRequires:	ncurses-devel
 BuildRequires:	tommath-devel
-BuildRequires:	zlib-devel
+BuildRequires:	pkgconfig(libcurl)
+BuildRequires:	pkgconfig(ncurses)
+BuildRequires:	pkgconfig(zlib)
 %if %{milter}
 BuildRequires:	sendmail-devel
 BuildRequires:	tcp_wrappers-devel
 %endif
+Requires(post,postun):	clamav-db
+Requires(post,preun,pre,postun):	rpm-helper
 
 %description
 Clam AntiVirus is an anti-virus toolkit for Unix. The main purpose of this
@@ -81,14 +73,8 @@ You can build %{name} with some conditional build swithes;
 Summary:	The Clam AntiVirus Daemon
 Group:		System/Servers
 Requires:	%{name} >= %{version}
-Requires(post): clamav-db
-Requires(preun): clamav-db
-Requires(post): %{libname} >= %{version}
-Requires(preun): %{libname} >= %{version}
-Requires(post): rpm-helper
-Requires(preun): rpm-helper
-Requires(pre): rpm-helper
-Requires(postun): rpm-helper
+Requires(post,preun):	clamav-db
+Requires(post,preun,pre,postun):	rpm-helper
 
 %description -n	clamd
 The Clam AntiVirus Daemon
@@ -100,14 +86,8 @@ Group:		System/Servers
 Requires:	%{name} >= %{version}
 Requires:	clamd >= %{version}
 Requires:	tcp_wrappers
-Requires(post): clamav-db
-Requires(preun): clamav-db
-Requires(post): %{libname} >= %{version}
-Requires(preun): %{libname} >= %{version}
-Requires(post): rpm-helper
-Requires(preun): rpm-helper
-Requires(pre): rpm-helper
-Requires(postun): rpm-helper
+Requires(post,preun):	clamav-db
+Requires(post,preun,pre,postun):	rpm-helper
 
 %description -n	%{name}-milter
 The Clam AntiVirus milter Daemon
@@ -117,10 +97,7 @@ The Clam AntiVirus milter Daemon
 Summary:	Virus database for %{name}
 Group:		Databases
 Requires:	%{name} >= %{version}
-Requires(post): rpm-helper
-Requires(preun): rpm-helper
-Requires(pre): rpm-helper
-Requires(postun): rpm-helper
+Requires(post,preun,pre,postun):	rpm-helper
 
 %description -n	%{name}-db
 The actual virus database for %{name}
@@ -132,38 +109,24 @@ Group:          System/Libraries
 %description -n	%{libname}
 Shared libraries for %{name}
 
-%package -n	%{develname}
+%package -n	%{devname}
 Summary:	Development library and header files for the %{name} library
 Group:		Development/C
 Requires:	%{libname} >= %{version}
 Provides:	%{name}-devel = %{version}-%{release}
-Obsoletes:	%{name}-devel
-Obsoletes:	%{mklibname clamav 1 -d}
-Obsoletes:	%{mklibname clamav 2 -d}
-Obsoletes:	%{mklibname clamav 3 -d}
 
-%description -n	%{develname}
+%description -n	%{devname}
 This package contains the development library and header files for the 
 %{name} library.
 
 %prep
-
-%setup -q -n %{name}-%{version}
+%setup -q
+%apply_patches
 
 # clean up
 for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type f -name .#\*` `find . -type d -name .svn`; do
     if [ -e "$i" ]; then rm -rf $i; fi >&/dev/null
 done
-
-%patch0 -p1 -b .mdvconf
-%patch1 -p1 -b .linkage_fix
-%patch2 -p1 -b .build_fix
-
-%patch10 -p1 -b .private
-%patch11 -p1 -b .open
-%patch12 -p1 -b .cliopts
-%patch13 -p1 -b .umask
-%patch14 -p1 -b .bug5252
 
 # we can't ship libclamunrar
 if [ -d libclamunrar ]; then
@@ -194,35 +157,35 @@ export CFLAGS="$CFLAGS -I%{_includedir}/tommath"
 export have_cv_ipv6=yes
 
 %configure2_5x \
-    --localstatedir=/var/lib \
-    --disable-%{name} \
-    --with-user=%{name} \
-    --with-group=%{name} \
-    --with-dbdir=/var/lib/%{name} \
-    --disable-rpath \
-    --disable-zlib-vcheck \
-    --disable-unrar \
-    --enable-clamdtop \
-    --enable-id-check \
-    --enable-clamuko \
-    --enable-bigstack \
-    --with-zlib=%{_prefix} \
-    --with-libbz2-prefix=%{_prefix} \
-    --with-system-tommath \
+	--localstatedir=/var/lib \
+	--disable-%{name} \
+	--with-user=%{name} \
+	--with-group=%{name} \
+	--with-dbdir=/var/lib/%{name} \
+	--disable-rpath \
+	--disable-zlib-vcheck \
+	--disable-unrar \
+	--enable-clamdtop \
+	--enable-id-check \
+	--enable-clamuko \
+	--enable-bigstack \
+	--with-zlib=%{_prefix} \
+	--with-libbz2-prefix=%{_prefix} \
+	--with-system-tommath \
 %if %{milter}
-    --enable-milter --with-tcpwrappers \
+	--enable-milter \
+	--with-tcpwrappers \
 %else
-    --disable-milter --without-tcpwrappers \
+	--disable-milter \
+	--without-tcpwrappers \
 %endif
 
 # anti rpath hack
-perl -pi -e "s|^sys_lib_dlsearch_path_spec=.*|sys_lib_dlsearch_path_spec=\"/%{_lib} %{_libdir}\"|g" libtool
+erl -i -e "s|^sys_lib_dlsearch_path_spec=.*|sys_lib_dlsearch_path_spec=\"/%{_lib} %{_libdir}\"|g" libtool
 
 %make
 
 %install
-rm -rf %{buildroot}
-
 %makeinstall_std
 
 # install the init scripts
@@ -432,9 +395,9 @@ done
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}/tmp
 
 %files -n %{libname}
-%{_libdir}/*.so.%{major}*
+%{_libdir}/libclamav.so.%{major}*
 
-%files -n %{develname}
+%files -n %{devname}
 %{multiarch_bindir}/clamav-config
 %{_bindir}/clamav-config
 %{_includedir}/*
