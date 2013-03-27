@@ -13,7 +13,7 @@
 # Provides: clamav-milter
 # Should-Start: clamd
 # Should-Stop: clamd
-# Default-Start: 345
+# Default-Start: 3 4 5
 # Short-Description: Startup script for the Clamav Milter Daemon
 # Description: clamav-milter is a daemon which hooks into sendmail \
 #              and routes email messages to clamav.

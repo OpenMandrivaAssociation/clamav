@@ -9,7 +9,7 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.97.5
+Version:	0.97.7
 Release:	1
 License:	GPL
 Group:		File tools
@@ -181,7 +181,7 @@ export have_cv_ipv6=yes
 %endif
 
 # anti rpath hack
-erl -i -e "s|^sys_lib_dlsearch_path_spec=.*|sys_lib_dlsearch_path_spec=\"/%{_lib} %{_libdir}\"|g" libtool
+perl -i -e "s|^sys_lib_dlsearch_path_spec=.*|sys_lib_dlsearch_path_spec=\"/%{_lib} %{_libdir}\"|g" libtool
 
 %make
 

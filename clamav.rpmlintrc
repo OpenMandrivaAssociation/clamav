@@ -1,0 +1,18 @@
+# False positives: test files
+addFilter("W: file-not-utf8")
+addFilter("W: wrong-file-end-of-line-encoding")
+addFilter("W: hidden-file-or-dir")
+
+# The daemon needs a specific gid and uid ("clamav")
+addFilter("W: non-standard-gid")
+addFilter("W: non-standard-uid")
+
+# The daemon service is rightly enabled by default
+addFilter("W: service-default-enabled")
+
+# There are two different daemons and log files:
+# one of them does not match the main name
+addFilter("E: incoherent-logrotate-file")
+
+# The daemon name differs from the main package one
+addFilter("W: incoherent-init-script-name")
