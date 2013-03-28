@@ -270,7 +270,7 @@ cat > README.urpmi << EOF
 clamav-0.95+ bundles support for RAR v3 in "libclamav" without permission,
 from Eugene Roshal of RARlabs. There is also patent issues involved.
 
-Therefore Mandriva has been forced to remove the offending code.
+Therefore we have been forced to remove the offending code.
 EOF
 
 %multiarch_binaries %{buildroot}%{_bindir}/clamav-config
