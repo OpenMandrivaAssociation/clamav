@@ -33,6 +33,8 @@ Source7:	clamav-milter.sysconfig
 Source8:	clamav-milter.logrotate
 Source9:	clamav-clamd.sysconfig
 Source10:	clamav-freshclam.sysconfig
+Source11:	http://db.local.clamav.net/main-54.cvd
+Source12:	http://db.local.clamav.net/daily-16989.cvd
 Patch0:		clamav-mdv_conf.diff
 Patch1:		clamav-0.95-linkage_fix.diff
 Patch2:		clamav-0.97-build_fix.diff
@@ -189,6 +191,10 @@ perl -i -e "s|^sys_lib_dlsearch_path_spec=.*|sys_lib_dlsearch_path_spec=\"/%{_li
 install -d %{buildroot}%{_initrddir}
 install -m755 Mandriva/clamav-clamd.init %{buildroot}%{_initrddir}/clamd
 install -m755 Mandriva/clamav-freshclamd.init %{buildroot}%{_initrddir}/freshclam
+
+# install the virus-db files
+install -D -m 0644 -p %SOURCE11   %{buildroot}/var/lib/%{name}/main.cvd
+install -D -m 0644 -p %SOURCE12   %{buildroot}/var/lib/%{name}/daily.cvd
 
 %if %{milter}
 # install the init script
