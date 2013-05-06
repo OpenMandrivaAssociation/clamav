@@ -7,10 +7,10 @@ addFilter("W: hidden-file-or-dir")
 addFilter("W: non-standard-gid")
 addFilter("W: non-standard-uid")
 
-# The daemon service is rightly enabled by default
+# The daemon service is rigthly enabled by default
 addFilter("W: service-default-enabled")
 
-# There are two different daemons and log files:
+# There is two different daemons and log files:
 # one of them does not match the main name
 addFilter("E: incoherent-logrotate-file")
 

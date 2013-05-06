@@ -11,9 +11,12 @@
 
 ### BEGIN INIT INFO
 # Provides: clamav-milter
+# Required-Start: $network $syslog clamd
+# Required-Stop: $network $syslog clamd
 # Should-Start: clamd
 # Should-Stop: clamd
 # Default-Start: 3 4 5
+# Default-Stop:
 # Short-Description: Startup script for the Clamav Milter Daemon
 # Description: clamav-milter is a daemon which hooks into sendmail \
 #              and routes email messages to clamav.

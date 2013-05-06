@@ -14,6 +14,7 @@
 # Required-Start: $network $syslog clamd
 # Required-Stop: $network $syslog clamd
 # Default-Start: 3 4 5
+# Default-Stop:
 # Short-Description: Clam AntiVirus Database Update Daemon.
 # Description: Clam AntiVirus Database Update Daemon.
 ### END INIT INFO
