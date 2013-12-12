@@ -1,0 +1,24 @@
+diff -Naur clamav-0.98.orig/freshclam/freshclam.c clamav-0.98/freshclam/freshclam.c
+--- clamav-0.98.orig/freshclam/freshclam.c	2013-12-11 08:27:42.078211123 -0500
++++ clamav-0.98/freshclam/freshclam.c	2013-12-11 08:42:53.398221546 -0500
+@@ -123,7 +123,7 @@
+ {
+     FILE *fd;
+     int old_umask;
+-    old_umask = umask (0006);
++    old_umask = umask (0022);
+     if ((fd = fopen (pidfile, "w")) == NULL)
+     {
+         logg ("!Can't save PID to file %s: %s\n", pidfile, strerror (errno));
+diff -Naur clamav-0.98.orig/shared/output.c clamav-0.98/shared/output.c
+--- clamav-0.98.orig/shared/output.c	2013-12-11 08:27:42.375211126 -0500
++++ clamav-0.98/shared/output.c	2013-12-11 08:43:14.367221785 -0500
+@@ -348,7 +348,7 @@
+     logg_open();
+ 
+     if(!logg_fp && logg_file) {
+-        old_umask = umask(0037);
++        old_umask = umask(0077);
+         if((logg_fp = fopen(logg_file, "at")) == NULL) {
+             umask(old_umask);
+ #ifdef CL_THREAD_SAFE

@@ -8,8 +8,8 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.97.8
-Release:	5
+Version:	0.98
+Release:	1
 License:	GPLv2+
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -22,7 +22,7 @@ URL:		http://clamav.sourceforge.net/
 #
 # Both Redhat and debian removes this code from the upstream tar ball
 # and repackages it.
-Source0:	%{name}-%{version}-norar.tar.gz
+Source0:	%{name}-%{version}-norar.tar.xz
 Source2:	%{name}-clamd.init
 Source3:	%{name}-clamd.logrotate
 Source4:	%{name}-freshclamd.init
@@ -34,12 +34,12 @@ Source9:	%{name}-clamd.sysconfig
 Source10:	%{name}-freshclam.sysconfig
 Source100:	%{name}.rpmlintrc
 Patch0:		%{name}-mdv_conf.diff
-Patch1:		%{name}-0.95-linkage_fix.diff
-Patch2:		%{name}-0.97-build_fix.diff
+Patch1:		%{name}-0.98-linkage_fix.diff
+Patch2:		%{name}-0.98-build_fix.diff
 Patch10:	%{name}-0.97.2-private.patch
 Patch11:	%{name}-0.92-open.patch
-Patch12:	%{name}-0.95-cliopts.patch
-Patch13:	%{name}-0.95rc1-umask.patch
+Patch12:	%{name}-0.98-cliopts.patch
+Patch13:	%{name}-0.98-umask.patch
 # Fixed in this release
 # https://bugzilla.clamav.net/show_bug.cgi?id=5252
 #Patch14:	%%{name}-0.97.5-bug5252.diff
@@ -139,14 +139,15 @@ done
 
 %patch0 -p1 -b .mdvconf
 %patch1 -p1 -b .linkage_fix
-%patch2 -p1 -b .build_fix
+# %patch2 -p1 -b .build_fix
 
 %patch10 -p1 -b .private
-%patch11 -p1 -b .open
+# %patch11 -p1 -b .open
 %patch12 -p1 -b .cliopts
 %patch13 -p1 -b .umask
 
 # we can't ship libclamunrar
+rm -rf libclamunrar
 if [ -d libclamunrar ]; then
     echo "delete the libclamunrar directory and repackage the tar ball"
     exit 1
@@ -240,8 +241,8 @@ touch %{buildroot}%{_var}/log/%{name}/%{name}-milter.log
 %endif
 
 # install config files
-install -m644 etc/clamd.conf %{buildroot}%{_sysconfdir}/clamd.conf
-install -m644 etc/freshclam.conf %{buildroot}%{_sysconfdir}/freshclam.conf
+install -m644 etc/clamd.conf.sample %{buildroot}%{_sysconfdir}/clamd.conf
+install -m644 etc/freshclam.conf.sample %{buildroot}%{_sysconfdir}/freshclam.conf
 
 # pid file dir
 install -d %{buildroot}%{_var}/run/%{name}
@@ -372,8 +373,8 @@ done
 %doc AUTHORS BUGS FAQ NEWS README test UPGRADE README.urpmi
 %doc docs/*.pdf
 %doc README.qmail+qmail-scanner COPYING*
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/freshclam.conf
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf*
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/freshclam.conf*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/freshclam
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/sysconfig/freshclam
 %attr(0755,root,root) %{_initrddir}/freshclam
@@ -415,7 +416,7 @@ done
 %if %{milter}
 %files -n %{name}-milter
 %doc AUTHORS README
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-milter.conf
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-milter.conf*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/sysconfig/%{name}-milter
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}-milter
 %attr(0755,root,root) %{_initrddir}/%{name}-milter

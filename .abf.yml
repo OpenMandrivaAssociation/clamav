@@ -1,2 +1,6 @@
 sources:
+  clamav-0.97.5-norar.tar.gz: 4d5b9c2ad3d71b7212253d00e659d5e68d390048
+  clamav-0.97.6-norar.tar.gz: 9520103176a05dc8cd744420b2bc6ba633100dea
+  clamav-0.97.7-norar.tar.gz: db8ecc221223e0c44cc966310fd3f1b9512454f8
   clamav-0.97.8-norar.tar.gz: 886f49e18e349a6117e3d692930ea1786c2f1575
+  clamav-0.98-norar.tar.xz: 89e863240e6126f86213f35685d8d2f9e656491a

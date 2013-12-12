@@ -1,10 +1,9 @@
-Index: clamav-0.95rc1/shared/optparser.c
-===================================================================
---- clamav-0.95rc1.orig/shared/optparser.c
-+++ clamav-0.95rc1/shared/optparser.c
-@@ -211,7 +211,7 @@ const struct clam_option clam_options[] 
+diff -Naur clamav-0.98.orig/shared/optparser.c clamav-0.98/shared/optparser.c
+--- clamav-0.98.orig/shared/optparser.c	2013-12-11 08:27:42.375211126 -0500
++++ clamav-0.98/shared/optparser.c	2013-12-11 08:41:17.365220447 -0500
+@@ -255,7 +255,7 @@
  
-     { "ExitOnOOM", NULL, 0, TYPE_BOOL, MATCH_BOOL, 0, NULL, 0, OPT_CLAMD, "Stop the daemon when libclamav reports an out of memory condition.", "yes" },
+     { "AllowAllMatchScan", NULL, 0, TYPE_BOOL, MATCH_BOOL, 1, NULL, 0, OPT_CLAMD, "Permit use of the ALLMATCHSCAN command.", "yes" },
  
 -    { "Foreground", NULL, 0, TYPE_BOOL, MATCH_BOOL, 0, NULL, 0, OPT_CLAMD | OPT_FRESHCLAM | OPT_MILTER, "Don't fork into background.", "no" },
 +    { "Foreground", "nofork", 0, TYPE_BOOL, MATCH_BOOL, 0, NULL, 0, OPT_CLAMD | OPT_FRESHCLAM | OPT_MILTER, "Don't fork into background.", "no" },

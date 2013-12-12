@@ -1,0 +1,11 @@
+diff -Naur clamav-0.98.orig/clamav-milter/Makefile.am clamav-0.98/clamav-milter/Makefile.am
+--- clamav-0.98.orig/clamav-milter/Makefile.am	2013-12-11 08:27:42.369211126 -0500
++++ clamav-0.98/clamav-milter/Makefile.am	2013-12-11 08:36:42.428217303 -0500
+@@ -46,6 +46,7 @@
+ endif
+ 
+ DEFS = @DEFS@ -DCL_NOLIBCLAMAV
++CFLAGS=@CFLAGS@
+ LIBS = $(top_builddir)/libclamav/libclamav_internal_utils.la @CLAMAV_MILTER_LIBS@ @THREAD_LIBS@
+ AM_CPPFLAGS = -I$(top_srcdir)/clamd -I$(top_srcdir)/libclamav -I$(top_srcdir)/shared -I$(top_srcdir)
+ CLEANFILES=*.gcda *.gcno
