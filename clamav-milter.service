@@ -1,0 +1,12 @@
+[Unit]
+Description=Milter (sendmail/postfix integration) module for the Clam Antivirus scanner
+After=network.target
+
+[Service]
+Type=forking
+User=clamav
+PIDFile=/run/clamav/clamav-milter.pid
+ExecStart=/usr/sbin/clamav-milter --config-file=/etc/clamav-milter.conf
+
+[Install]
+WantedBy=multi-user.target
