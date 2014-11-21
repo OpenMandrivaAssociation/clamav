@@ -33,7 +33,7 @@ Source8:	%{name}-milter.logrotate
 Source100:	%{name}.rpmlintrc
 Patch0:		%{name}-mdv_conf.diff
 Patch10:	%{name}-0.97.2-private.patch
-Patch12:	%{name}-0.98-cliopts.patch
+Patch12:	%{name}-0.98.5-cliopts.patch
 Patch13:	%{name}-0.98-umask.patch
 # Fixed in this release
 # https://bugzilla.clamav.net/show_bug.cgi?id=5252
