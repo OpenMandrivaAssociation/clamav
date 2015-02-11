@@ -22,7 +22,7 @@ URL:		http://clamav.sourceforge.net/
 #
 # Both Redhat and debian removes this code from the upstream tar ball
 # and repackages it.
-Source0:	%{name}-%{version}-norar.tar.xz
+Source0:	%{name}-%{version}-norar.tar.gz
 Source1:        clamd-tmpfiles.conf
 Source2:	%{name}-clamd.service
 Source3:	%{name}-clamd.logrotate
