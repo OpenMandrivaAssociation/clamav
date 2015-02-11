@@ -8,8 +8,8 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.98.5
-Release:	2
+Version:	0.98.6
+Release:	1
 License:	GPLv2+
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -30,6 +30,9 @@ Source4:	%{name}-freshclam.service
 Source5:	%{name}-freshclam.logrotate
 Source6:	%{name}-milter.service
 Source8:	%{name}-milter.logrotate
+# clamd service fails to start on clean systems without these files
+Source10:       http://db.local.clamav.net/main.cvd
+Source11:       http://db.local.clamav.net/daily.cvd
 Source100:	%{name}.rpmlintrc
 Patch0:		%{name}-mdv_conf.diff
 Patch10:	%{name}-0.97.2-private.patch
@@ -223,6 +226,10 @@ touch %{buildroot}%{_var}/log/%{name}/%{name}-milter.log
 install -m644 etc/clamd.conf.sample %{buildroot}%{_sysconfdir}/clamd.conf
 install -m644 etc/freshclam.conf.sample %{buildroot}%{_sysconfdir}/freshclam.conf
 
+# database files
+install -D -m 0644 -p %{SOURCE10} %{buildroot}/var/lib/%{name}/main.cvd
+install -D -m 0644 -p %{SOURCE11} %{buildroot}/var/lib/%{name}/daily.cvd
+
 # pid file dir
 install -d %{buildroot}%{_var}/run/%{name}
 
@@ -378,7 +385,7 @@ done
 %if !%{milter}
 %exclude %{_mandir}/man8/%{name}-milter.8*
 %endif
-%dir %attr(0755,%{name},%{name}) %{_var}/run/%{name}
+# %dir %attr(0755,%{name},%{name}) %{_var}/run/%{name}
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}
 %dir %attr(0775,%{name},%{name}) %{_var}/log/%{name}
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/freshclam.log
@@ -409,8 +416,7 @@ done
 %files -n %{name}-db
 %doc AUTHORS README
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}
-#attr(0644,%%{name},%%{name}) %%config(noreplace) /var/lib/%%{name}/daily.cvd
-#attr(0644,%%{name},%%{name}) %%config(noreplace) /var/lib/%%{name}/main.cvd
+%config /var/lib/%{name}/*cvd
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}/tmp
 
 
