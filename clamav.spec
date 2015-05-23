@@ -8,7 +8,7 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.98.6
+Version:	0.98.7
 Release:	1
 License:	GPLv2+
 Group:		File tools
@@ -22,7 +22,7 @@ URL:		http://clamav.sourceforge.net/
 #
 # Both Redhat and debian removes this code from the upstream tar ball
 # and repackages it.
-Source0:	%{name}-%{version}-norar.tar.gz
+Source0:	%{name}-%{version}-norar.tar.xz
 Source1:        clamd-tmpfiles.conf
 Source2:	%{name}-clamd.service
 Source3:	%{name}-clamd.logrotate
