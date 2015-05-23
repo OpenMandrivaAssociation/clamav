@@ -8,8 +8,8 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.97.8
-Release:	2
+Version:	0.98.7
+Release:	0.1
 License:	GPLv2+
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -22,24 +22,22 @@ URL:		http://clamav.sourceforge.net/
 #
 # Both Redhat and debian removes this code from the upstream tar ball
 # and repackages it.
-Source0:	%{name}-%{version}-norar.tar.gz
-Source2:	%{name}-clamd.init
+Source0:	%{name}-%{version}-norar.tar.xz
+Source1:        clamd-tmpfiles.conf
+Source2:	%{name}-clamd.service
 Source3:	%{name}-clamd.logrotate
-Source4:	%{name}-freshclamd.init
+Source4:	%{name}-freshclam.service
 Source5:	%{name}-freshclam.logrotate
-Source6:	%{name}-milter.init
-Source7:	%{name}-milter.sysconfig
+Source6:	%{name}-milter.service
 Source8:	%{name}-milter.logrotate
-Source9:	%{name}-clamd.sysconfig
-Source10:	%{name}-freshclam.sysconfig
+# clamd service fails to start on clean systems without these files
+Source10:       http://db.local.clamav.net/main.cvd
+Source11:       http://db.local.clamav.net/daily.cvd
 Source100:	%{name}.rpmlintrc
 Patch0:		%{name}-mdv_conf.diff
-Patch1:		%{name}-0.95-linkage_fix.diff
-Patch2:		%{name}-0.97-build_fix.diff
 Patch10:	%{name}-0.97.2-private.patch
-Patch11:	%{name}-0.92-open.patch
-Patch12:	%{name}-0.95-cliopts.patch
-Patch13:	%{name}-0.95rc1-umask.patch
+Patch12:	%{name}-0.98.5-cliopts.patch
+Patch13:	%{name}-0.98-umask.patch
 # Fixed in this release
 # https://bugzilla.clamav.net/show_bug.cgi?id=5252
 #Patch14:	%%{name}-0.97.5-bug5252.diff
@@ -138,15 +136,13 @@ for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type 
 done
 
 %patch0 -p1 -b .mdvconf
-%patch1 -p1 -b .linkage_fix
-%patch2 -p1 -b .build_fix
 
 %patch10 -p1 -b .private
-%patch11 -p1 -b .open
 %patch12 -p1 -b .cliopts
 %patch13 -p1 -b .umask
 
 # we can't ship libclamunrar
+rm -rf libclamunrar
 if [ -d libclamunrar ]; then
     echo "delete the libclamunrar directory and repackage the tar ball"
     exit 1
@@ -154,18 +150,10 @@ fi
 mkdir -p libclamunrar{,_iface}
 touch libclamunrar/{Makefile.in,all,install}
 
-
-mkdir -p Mandriva
-cp %{SOURCE2} Mandriva/%{name}-clamd.init
-cp %{SOURCE3} Mandriva/%{name}-clamd.logrotate
-cp %{SOURCE4} Mandriva/%{name}-freshclamd.init
-cp %{SOURCE5} Mandriva/%{name}-freshclam.logrotate
-cp %{SOURCE6} Mandriva/%{name}-milter.init
-cp %{SOURCE7} Mandriva/%{name}-milter.sysconfig
-cp %{SOURCE8} Mandriva/%{name}-milter.logrotate
-cp %{SOURCE9} Mandriva/%{name}-clamd.sysconfig
-cp %{SOURCE10} Mandriva/%{name}-freshclam.sysconfig
-
+mkdir -p OMV
+cp %{SOURCE3} OMV/clamav-clamd.logrotate
+cp %{SOURCE5} OMV/clamav-freshclam.logrotate
+cp %{SOURCE8} OMV/clamav-milter.logrotate
 
 %build
 %serverbuild
@@ -205,30 +193,25 @@ perl -pi -e "s|^sys_lib_dlsearch_path_spec=.*|sys_lib_dlsearch_path_spec=\"/%{_l
 %makeinstall_std
 
 # install the init scripts
-install -d %{buildroot}%{_initrddir}
-install -m755 Mandriva/%{name}-clamd.init %{buildroot}%{_initrddir}/clamd
-install -m755 Mandriva/%{name}-freshclamd.init %{buildroot}%{_initrddir}/freshclam
-
 %if %{milter}
-# install the init script
-install -m755 Mandriva/%{name}-milter.init %{buildroot}%{_initrddir}/%{name}-milter
-# install the milter config
-install -d %{buildroot}%{_sysconfdir}/sysconfig
-install -m644 Mandriva/%{name}-milter.sysconfig %{buildroot}%{_sysconfdir}/sysconfig/%{name}-milter
+# Install the systemd unit+tempfiles
+install -D -p -m 644 %{SOURCE6} %{buildroot}%{_unitdir}/%{name}-milter.service
 %endif
 
-# install config files
-install -d %{buildroot}%{_sysconfdir}/sysconfig
-install -m0644 Mandriva/%{name}-clamd.sysconfig %{buildroot}%{_sysconfdir}/sysconfig/clamd
-install -m0644 Mandriva/%{name}-freshclam.sysconfig %{buildroot}%{_sysconfdir}/sysconfig/freshclam
+install -D -p -m 644 %{SOURCE2} %{buildroot}%{_unitdir}/%{name}-clamd.service
+install -D -p -m 644 %{SOURCE4} %{buildroot}%{_unitdir}/%{name}-freshclam.service
+
+#install tmpfiles
+install -D -p -m 644 %{SOURCE1} %{buildroot}%{_tmpfilesdir}/%{name}.conf
+
 
 # install the logrotate stuff
 install -d %{buildroot}%{_sysconfdir}/logrotate.d
-install -m644 Mandriva/%{name}-clamd.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/clamd
-install -m644 Mandriva/%{name}-freshclam.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/freshclam
+install -m644 OMV/%{name}-clamd.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/clamd
+install -m644 OMV/%{name}-freshclam.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/freshclam
 
 %if %{milter}
-install -m644 Mandriva/%{name}-milter.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/%{name}-milter
+install -m644 OMV/%{name}-milter.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/%{name}-milter
 %endif
 
 install -d %{buildroot}%{_var}/log/%{name}
@@ -240,8 +223,12 @@ touch %{buildroot}%{_var}/log/%{name}/%{name}-milter.log
 %endif
 
 # install config files
-install -m644 etc/clamd.conf %{buildroot}%{_sysconfdir}/clamd.conf
-install -m644 etc/freshclam.conf %{buildroot}%{_sysconfdir}/freshclam.conf
+install -m644 etc/clamd.conf.sample %{buildroot}%{_sysconfdir}/clamd.conf
+install -m644 etc/freshclam.conf.sample %{buildroot}%{_sysconfdir}/freshclam.conf
+
+# database files
+install -D -m 0644 -p %{SOURCE10} %{buildroot}/var/lib/%{name}/main.cvd
+install -D -m 0644 -p %{SOURCE11} %{buildroot}/var/lib/%{name}/daily.cvd
 
 # pid file dir
 install -d %{buildroot}%{_var}/run/%{name}
@@ -372,16 +359,17 @@ done
 %doc AUTHORS BUGS FAQ NEWS README test UPGRADE README.urpmi
 %doc docs/*.pdf
 %doc README.qmail+qmail-scanner COPYING*
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/freshclam.conf
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf*
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/freshclam.conf*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/freshclam
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/sysconfig/freshclam
-%attr(0755,root,root) %{_initrddir}/freshclam
+%{_unitdir}/%{name}-freshclam.service
+%{_tmpfilesdir}/%{name}.conf
 %{_bindir}/clambc
 %{_bindir}/clamconf
 %{_bindir}/clamdscan
 %{_bindir}/clamdtop
 %{_bindir}/clamscan
+%{_bindir}/clamsubmit
 %{_bindir}/freshclam
 %{_bindir}/sigtool
 %{_mandir}/man1/clambc.1*
@@ -389,6 +377,7 @@ done
 %{_mandir}/man1/clamdscan.1*
 %{_mandir}/man1/clamdtop.1*
 %{_mandir}/man1/clamscan.1*
+%{_mandir}/man1/clamsubmit.1*
 %{_mandir}/man1/freshclam.1*
 %{_mandir}/man1/sigtool.1*
 %{_mandir}/man5/clamd.conf.5*
@@ -396,7 +385,7 @@ done
 %if !%{milter}
 %exclude %{_mandir}/man8/%{name}-milter.8*
 %endif
-%dir %attr(0755,%{name},%{name}) %{_var}/run/%{name}
+# %dir %attr(0755,%{name},%{name}) %{_var}/run/%{name}
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}
 %dir %attr(0775,%{name},%{name}) %{_var}/log/%{name}
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/freshclam.log
@@ -405,8 +394,7 @@ done
 %files -n clamd
 %doc AUTHORS README
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/clamd
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/sysconfig/clamd
-%attr(0755,root,root) %{_initrddir}/clamd
+%{_unitdir}/%{name}-clamd.service
 %{_sbindir}/clamd
 %{_mandir}/man8/clamd.8*
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/clamd.log
@@ -415,10 +403,9 @@ done
 %if %{milter}
 %files -n %{name}-milter
 %doc AUTHORS README
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-milter.conf
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/sysconfig/%{name}-milter
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-milter.conf*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}-milter
-%attr(0755,root,root) %{_initrddir}/%{name}-milter
+%{_unitdir}/%{name}-milter.service
 %{_sbindir}/%{name}-milter
 %{_mandir}/man8/%{name}-milter.8*
 %{_mandir}/man5/%{name}-milter.conf.5*
@@ -429,8 +416,7 @@ done
 %files -n %{name}-db
 %doc AUTHORS README
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}
-#attr(0644,%%{name},%%{name}) %%config(noreplace) /var/lib/%%{name}/daily.cvd
-#attr(0644,%%{name},%%{name}) %%config(noreplace) /var/lib/%%{name}/main.cvd
+%config /var/lib/%{name}/*cvd
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}/tmp
 
 
@@ -449,16 +435,3 @@ done
 
 
 %changelog
-* Fri May 03 2013 Giovanni Mariani <mc2374@mclink.it> 0.97.8-1
-- New version 0.97.8
-- Removed "Mandriva" from README.urpmi
-- Fixed some new rpmlint warnings (missing-lsb-keyword) by massaging
-  S2, S4 and S6.
-
-* Fri Apr 05 2013 Giovanni Mariani <mc2374@mclink.it> 0.97.7-2
-- Added explicit starting command for freshclam in %%pre to fetch the
-  updated db signatures at the install time
-
-* Mon Mar 18 2013 Giovanni Mariani <mc2374@mclink.it> 0.97.7-1
-- New version 0.97.7
-- Added S100 to kill unavoidable rpmlint warnings
