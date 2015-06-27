@@ -46,7 +46,7 @@ diff -Naur clamav-0.98.1.orig/etc/clamav-milter.conf.sample clamav-0.98.1/etc/cl
  #
  # Default: disabled
 -#PidFile /var/run/clamav-milter.pid
-+PidFile /var/run/clamav/clamav-milter.pid
++PidFile /run/clamav/clamav-milter.pid
  
  # Optional path to the global temporary directory.
  # Default: system specific (usually /tmp or /var/tmp).
@@ -116,7 +116,7 @@ diff -Naur clamav-0.98.1.orig/etc/clamd.conf.sample clamav-0.98.1/etc/clamd.conf
  # daemon (main thread).
  # Default: disabled
 -#PidFile /var/run/clamd.pid
-+PidFile /var/run/clamav/clamd.pid
++PidFile /run/clamav/clamd.pid
  
  # Optional path to the global temporary directory.
  # Default: system specific (usually /tmp or /var/tmp).
@@ -303,7 +303,7 @@ diff -Naur clamav-0.98.1.orig/etc/freshclam.conf.sample clamav-0.98.1/etc/freshc
  # This option allows you to save the process identifier of the daemon
  # Default: disabled
 -#PidFile /var/run/freshclam.pid
-+PidFile /var/run/clamav/freshclam.pid
++PidFile /run/clamav/freshclam.pid
  
  # By default when started freshclam drops privileges and switches to the
  # "clamav" user. This directive allows you to change the database owner.
