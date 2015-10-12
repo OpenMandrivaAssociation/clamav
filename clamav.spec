@@ -2,6 +2,8 @@
 %define	libname		%mklibname %{name} %{major}
 %define	 develname	%mklibname %{name} -d
 
+%define _disable_rebuild_configure 1
+
 %define	 milter		1
 %{?_with_milter:   %{expand: %%global milter 1}}
 %{?_without_milter:   %{expand: %%global milter 0}}
