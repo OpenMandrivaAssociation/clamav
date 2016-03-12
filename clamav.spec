@@ -1,12 +1,13 @@
-%define	major		 6
-%define	libname		%mklibname %{name} %{major}
-%define	 develname	%mklibname %{name} -d
+%define major 6
+%define libname %mklibname %{name} %{major}
+%define develname %mklibname %{name} -d
 
 %define _disable_rebuild_configure 1
+%define _disable_lto 1
 
-%define	 milter		1
-%{?_with_milter:   %{expand: %%global milter 1}}
-%{?_without_milter:   %{expand: %%global milter 0}}
+%define milter 1
+%{?_with_milter: %{expand: %%global milter 1}}
+%{?_without_milter: %{expand: %%global milter 0}}
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
@@ -25,7 +26,7 @@ URL:		http://clamav.sourceforge.net/
 # Both Redhat and debian removes this code from the upstream tar ball
 # and repackages it.
 Source0:	%{name}-%{version}-norar.tar.xz
-Source1:        clamd-tmpfiles.conf
+Source1:	clamd-tmpfiles.conf
 Source2:	%{name}-clamd.service
 Source3:	%{name}-clamd.logrotate
 Source4:	%{name}-freshclam.service
@@ -33,8 +34,8 @@ Source5:	%{name}-freshclam.logrotate
 Source6:	%{name}-milter.service
 Source8:	%{name}-milter.logrotate
 # clamd service fails to start on clean systems without these files
-Source10:       http://db.local.clamav.net/main.cvd
-Source11:       http://db.local.clamav.net/daily.cvd
+Source10:	http://db.local.clamav.net/main.cvd
+Source11:	http://db.local.clamav.net/daily.cvd
 Source100:	%{name}.rpmlintrc
 Patch0:		%{name}-mdv_conf.diff
 Patch10:	%{name}-0.97.2-private.patch
@@ -43,9 +44,9 @@ Patch13:	%{name}-0.98-umask.patch
 # Fixed in this release
 # https://bugzilla.clamav.net/show_bug.cgi?id=5252
 #Patch14:	%%{name}-0.97.5-bug5252.diff
-Requires(post,preun): %{name}-db
-Requires(post,preun): %{libname} >= %{version}
-Requires(pre,post,post,postun): rpm-helper
+Requires(post,preun):	%{name}-db
+Requires(post,preun):	%{libname} >= %{version}
+Requires(pre,post,post,postun):	rpm-helper
 BuildRequires:	bc
 BuildRequires:	bzip2-devel
 BuildRequires:	curl-devel
@@ -68,7 +69,7 @@ you can use in your own software.
 You can build %{name} with some conditional build switches; (ie. use with rpm
 --rebuild): --with[out] milter	Build %{name}-milter (disabled)
 
-%package -n	clamd
+%package -n clamd
 Summary:	The Clam AntiVirus Daemon
 Group:		System/Servers
 Requires:	%{name} = %{version}
@@ -81,7 +82,7 @@ Requires(pre,post):	rpm-helper
 The Clam AntiVirus Daemon.
 
 %if %{milter}
-%package -n	%{name}-milter
+%package -n %{name}-milter
 Summary:	The Clam AntiVirus milter Daemon
 Group:		System/Servers
 Requires:	%{name} = %{version}
@@ -96,7 +97,7 @@ Requires(post,preun):	%{libname} = %{version}
 The Clam AntiVirus milter Daemon.
 %endif
 
-%package -n	%{name}-db
+%package -n %{name}-db
 Summary:	Virus database for %{name}
 Group:		Databases
 Requires:	%{name} = %{version}
@@ -106,15 +107,14 @@ Requires(pre,post):	rpm-helper
 The actual virus database for %{name}.
 
 
-%package -n	%{libname}
+%package -n %{libname}
 Summary:	Shared libraries for %{name}
 Group:		System/Libraries
 
 %description -n	%{libname}
 Shared libraries for %{name}.
 
-
-%package -n	%{develname}
+%package -n %{develname}
 Summary:	Development library and header files for the %{name} library
 Group:		Development/C
 Requires:	%{libname} = %{version}-%{release}
@@ -127,7 +127,6 @@ Obsoletes:	%{name}-devel < %{version}
 %description -n	%{develname}
 This package contains the development library and header files for the 
 %{name} library.
-
 
 %prep
 %setup -q -n %{name}-%{version}
@@ -164,7 +163,7 @@ export CFLAGS="$CFLAGS -I%{_includedir}/tommath"
 # IPv6 check is buggy and does not work when there are no IPv6 interface on build machine
 export have_cv_ipv6=yes
 
-%configure2_5x \
+%configure \
     --localstatedir=/var/lib \
     --disable-%{name} \
     --with-user=%{name} \
@@ -190,18 +189,29 @@ perl -pi -e "s|^sys_lib_dlsearch_path_spec=.*|sys_lib_dlsearch_path_spec=\"/%{_l
 
 %make
 
-
 %install
 %makeinstall_std
 
 # install the init scripts
+install -D -p -m 644 %{SOURCE2} %{buildroot}%{_unitdir}/%{name}-clamd.service
+install -D -p -m 644 %{SOURCE4} %{buildroot}%{_unitdir}/%{name}-freshclam.service
+
+install -d %{buildroot}%{_presetdir}
+cat > %{buildroot}%{_presetdir}/86-clamd.preset << EOF
+enable %{name}-clamd.service
+EOF
+
+cat > %{buildroot}%{_presetdir}/86-freshclam.preset << EOF
+enable %{name}-freshclam.service
+EOF
+
 %if %{milter}
 # Install the systemd unit+tempfiles
 install -D -p -m 644 %{SOURCE6} %{buildroot}%{_unitdir}/%{name}-milter.service
+cat > %{buildroot}%{_presetdir}/86-milter.preset << EOF
+enable %{name}-milter.service
+EOF
 %endif
-
-install -D -p -m 644 %{SOURCE2} %{buildroot}%{_unitdir}/%{name}-clamd.service
-install -D -p -m 644 %{SOURCE4} %{buildroot}%{_unitdir}/%{name}-freshclam.service
 
 #install tmpfiles
 install -D -p -m 644 %{SOURCE1} %{buildroot}%{_tmpfilesdir}/%{name}.conf
@@ -263,15 +273,10 @@ chown -R qscand:qscand /var/lib/%{name}
 chown -R qscand:qscand %{_var}/log/%{name}
 chown -R qscand:qscand %{_var}/run/%{name}
 
-if [ -x %{_initrddir}/clamd ]; then
-    %{_initrddir}/clamd restart
-fi
+systemctl restart clamd.service
+systemctl restart freshclam.service
 
-if [ -x %{_initrddir}/freshclam ]; then
-    %{_initrddir}/freshclam restart
-fi
-
-# Regards // Oden Eriksson
+# Regards // OpenMandriva Association
 EOF
 
 cat > README.urpmi << EOF
@@ -285,7 +290,6 @@ EOF
 # cleanup
 rm -f %{buildroot}%{_libdir}/*.*a
 
-
 %pre
 %_pre_useradd %{name} /var/lib/%{name} /bin/sh
 
@@ -293,53 +297,25 @@ if ! [ -z "`getent group amavis`" ]; then
     gpasswd -a %{name} amavis
 fi
 
-
 %post
-%_post_service freshclam
 %create_ghostfile %{_var}/log/%{name}/freshclam.log %{name} %{name} 0644
-# (gvm) Force the signature db update, otherwise we ends up
-# *without* virus signatures until the next reboot
-if [ -x %{_initrddir}/freshclam ]; then
-    %{_initrddir}/freshclam restart
-fi
-
-
-%preun
-%_preun_service freshclam
-
 
 %pre -n clamd
 %_pre_useradd %{name} /var/lib/%{name} /bin/sh
 
-
 %post -n clamd
-%_post_service clamd
 %create_ghostfile %{_var}/log/%{name}/clamd.log %{name} %{name} 0644
-if [ -x %{_initrddir}/clamd ]; then
-    %{_initrddir}/clamd restart
-fi
-
-%preun -n clamd
-%_preun_service clamd
-
 
 %postun -n clamd
 %_postun_userdel %{name}
 
-
 %if %{milter}
 %post -n %{name}-milter
-%_post_service %{name}-milter
 %create_ghostfile %{_var}/log/%{name}/%{name}-milter.log %{name} %{name} 0644
-
-%preun -n %{name}-milter
-%_preun_service %{name}-milter
 %endif
-
 
 %pre -n %{name}-db
 %_pre_useradd %{name} /var/lib/%{name} /bin/sh
-
 
 %post -n %{name}-db
 # try to keep most uptodate database
@@ -356,7 +332,6 @@ done
 %postun -n %{name}-db
 %_postun_userdel %{name}
 
-
 %files
 %doc AUTHORS BUGS FAQ NEWS README test UPGRADE README.urpmi
 %doc docs/*.pdf
@@ -364,6 +339,7 @@ done
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/freshclam.conf*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/freshclam
+%{_presetdir}/86-freshclam.preset
 %{_unitdir}/%{name}-freshclam.service
 %{_tmpfilesdir}/%{name}.conf
 %{_bindir}/clambc
@@ -396,24 +372,24 @@ done
 %files -n clamd
 %doc AUTHORS README
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/clamd
+%{_presetdir}/86-clamd.preset
 %{_unitdir}/%{name}-clamd.service
 %{_sbindir}/clamd
 %{_mandir}/man8/clamd.8*
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/clamd.log
-
 
 %if %{milter}
 %files -n %{name}-milter
 %doc AUTHORS README
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-milter.conf*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}-milter
+%{_presetdir}/86-milter.preset
 %{_unitdir}/%{name}-milter.service
 %{_sbindir}/%{name}-milter
 %{_mandir}/man8/%{name}-milter.8*
 %{_mandir}/man5/%{name}-milter.conf.5*
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/%{name}-milter.log
 %endif
-
 
 %files -n %{name}-db
 %doc AUTHORS README
@@ -426,7 +402,6 @@ done
 %doc AUTHORS README
 %{_libdir}/*.so.%{major}*
 
-
 %files -n %{develname}
 %doc AUTHORS README
 %{multiarch_bindir}/%{name}-config
@@ -434,6 +409,3 @@ done
 %{_includedir}/*
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/libclamav.pc
-
-
-%changelog
