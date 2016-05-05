@@ -11,8 +11,8 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.98.7
-Release:	6
+Version:	0.99.1
+Release:	1
 License:	GPLv2+
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -38,7 +38,7 @@ Source10:	http://db.local.clamav.net/main.cvd
 Source11:	http://db.local.clamav.net/daily.cvd
 Source100:	%{name}.rpmlintrc
 Patch0:		%{name}-mdv_conf.diff
-Patch10:	%{name}-0.97.2-private.patch
+Patch10:	%{name}-0.99-private.patch
 Patch12:	%{name}-0.98.5-cliopts.patch
 Patch13:	%{name}-0.98-umask.patch
 # Fixed in this release
