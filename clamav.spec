@@ -130,9 +130,6 @@ This package contains the development library and header files for the
 %prep
 %setup -q -n %{name}-%{version}
 
-export CC=gcc
-export CXX=g++
-
 # clean up
 for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type f -name .#\*` `find . -type d -name .svn`; do
     if [ -e "$i" ]; then rm -rf $i; fi >&/dev/null
