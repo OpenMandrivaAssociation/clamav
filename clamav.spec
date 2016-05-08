@@ -11,7 +11,7 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.99.1
+Version:	0.99.2
 Release:	1
 License:	GPLv2+
 Group:		File tools
@@ -39,7 +39,6 @@ Source11:	http://db.local.clamav.net/daily.cvd
 Source100:	%{name}.rpmlintrc
 Patch0:		%{name}-mdv_conf.diff
 Patch10:	%{name}-0.99-private.patch
-Patch12:	%{name}-0.98.5-cliopts.patch
 Patch13:	%{name}-0.98-umask.patch
 # Fixed in this release
 # https://bugzilla.clamav.net/show_bug.cgi?id=5252
@@ -131,6 +130,9 @@ This package contains the development library and header files for the
 %prep
 %setup -q -n %{name}-%{version}
 
+export CC=gcc
+export CXX=g++
+
 # clean up
 for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type f -name .#\*` `find . -type d -name .svn`; do
     if [ -e "$i" ]; then rm -rf $i; fi >&/dev/null
@@ -139,7 +141,6 @@ done
 %patch0 -p1 -b .mdvconf
 
 %patch10 -p1 -b .private
-%patch12 -p1 -b .cliopts
 %patch13 -p1 -b .umask
 
 # we can't ship libclamunrar
@@ -175,6 +176,7 @@ export have_cv_ipv6=yes
     --enable-id-check \
     --enable-clamuko \
     --enable-bigstack \
+    --disable-llvm \
     --with-zlib=%{_prefix} \
     --with-libbz2-prefix=%{_prefix} \
     --with-system-tommath \
