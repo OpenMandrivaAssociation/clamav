@@ -52,6 +52,7 @@ BuildRequires:	curl-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	tommath-devel
 BuildRequires:	zlib-devel
+BuildRequires:	pkgconfig(libsystemd)
 %if %{milter}
 BuildRequires:	sendmail-devel
 BuildRequires:	tcp_wrappers-devel
@@ -366,6 +367,8 @@ done
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}
 %dir %attr(0775,%{name},%{name}) %{_var}/log/%{name}
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/freshclam.log
+/lib/systemd/system/clamav-daemon.service
+/lib/systemd/system/clamav-daemon.socket
 
 
 %files -n clamd
