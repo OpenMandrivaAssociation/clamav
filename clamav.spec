@@ -132,7 +132,9 @@ This package contains the development library and header files for the
 %prep
 %setup -q -n %{name}-%{version}
 %apply_patches
-autoreconf -f
+aclocal
+automake -a
+autoconf
 
 # clean up
 for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type f -name .#\*` `find . -type d -name .svn`; do
