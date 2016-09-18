@@ -15,7 +15,7 @@
  # Default: no default
  #MilterSocket /tmp/clamav-milter.socket
  #MilterSocket inet:7357
-+MilterSocket /var/lib/clamav/clamav-milter.socket
++MilterSocket /run/clamav/clamav-milter.socket
  
  # Define the group ownership for the (unix) milter socket.
  # Default: disabled (the primary group of the user running clamd)
@@ -59,7 +59,7 @@
  #
  # Default: no default
  #ClamdSocket tcp:scanner.mydomain:7357
-+ClamdSocket unix:/var/lib/clamav/clamd.socket
++ClamdSocket unix:/run/clamav/clamd.socket
  
  
  ##
