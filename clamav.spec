@@ -12,7 +12,7 @@
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.99.2
-Release:	2
+Release:	3
 License:	GPLv2+
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -287,6 +287,11 @@ EOF
 
 %multiarch_binaries %{buildroot}%{_bindir}/%{name}-config
 
+install -d %{buildroot}%{_presetdir}
+cat > %{buildroot}%{_presetdir}/86-clamav-daemon.preset << EOF
+enable clamav-daemon.socket
+EOF
+
 # cleanup
 rm -f %{buildroot}%{_libdir}/*.*a
 
@@ -299,6 +304,10 @@ fi
 
 %post
 %create_ghostfile %{_var}/log/%{name}/freshclam.log %{name} %{name} 0644
+%systemd_post clamav-daemon
+
+%preun
+%systemd_preun clamav-daemon
 
 %pre -n clamd
 %_pre_useradd %{name} /var/lib/%{name} /bin/sh
@@ -367,9 +376,9 @@ done
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}
 %dir %attr(0775,%{name},%{name}) %{_var}/log/%{name}
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/freshclam.log
-/lib/systemd/system/clamav-daemon.service
-/lib/systemd/system/clamav-daemon.socket
-
+%{_presetdir}/86-clamav-daemon.preset
+%{_unitdir}/clamav-daemon.service
+%{_unitdir}/clamav-daemon.socket
 
 %files -n clamd
 %doc AUTHORS README
@@ -398,7 +407,6 @@ done
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}
 %config /var/lib/%{name}/*cvd
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}/tmp
-
 
 %files -n %{libname}
 %doc AUTHORS README
