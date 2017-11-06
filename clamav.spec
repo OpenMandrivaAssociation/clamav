@@ -12,7 +12,7 @@
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.99.2
-Release:	1
+Release:	3
 License:	GPLv2+
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -38,6 +38,7 @@ Source10:	http://db.local.clamav.net/main.cvd
 Source11:	http://db.local.clamav.net/daily.cvd
 Source100:	%{name}.rpmlintrc
 Patch0:		%{name}-mdv_conf.diff
+Patch1:		clamav-0.99.2-openssl-1.1.patch
 Patch10:	%{name}-0.99-private.patch
 Patch13:	%{name}-0.98-umask.patch
 # Fixed in this release
@@ -52,6 +53,7 @@ BuildRequires:	curl-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	tommath-devel
 BuildRequires:	zlib-devel
+BuildRequires:	pkgconfig(libsystemd)
 %if %{milter}
 BuildRequires:	sendmail-devel
 BuildRequires:	tcp_wrappers-devel
@@ -129,16 +131,15 @@ This package contains the development library and header files for the
 
 %prep
 %setup -q -n %{name}-%{version}
+%apply_patches
+aclocal
+automake -a
+autoconf
 
 # clean up
 for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type f -name .#\*` `find . -type d -name .svn`; do
     if [ -e "$i" ]; then rm -rf $i; fi >&/dev/null
 done
-
-%patch0 -p1 -b .mdvconf
-
-%patch10 -p1 -b .private
-%patch13 -p1 -b .umask
 
 # we can't ship libclamunrar
 rm -rf libclamunrar
@@ -286,6 +287,11 @@ EOF
 
 %multiarch_binaries %{buildroot}%{_bindir}/%{name}-config
 
+install -d %{buildroot}%{_presetdir}
+cat > %{buildroot}%{_presetdir}/86-clamav-daemon.preset << EOF
+enable clamav-daemon.socket
+EOF
+
 # cleanup
 rm -f %{buildroot}%{_libdir}/*.*a
 
@@ -298,6 +304,10 @@ fi
 
 %post
 %create_ghostfile %{_var}/log/%{name}/freshclam.log %{name} %{name} 0644
+%systemd_post clamav-daemon
+
+%preun
+%systemd_preun clamav-daemon
 
 %pre -n clamd
 %_pre_useradd %{name} /var/lib/%{name} /bin/sh
@@ -366,7 +376,9 @@ done
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}
 %dir %attr(0775,%{name},%{name}) %{_var}/log/%{name}
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/freshclam.log
-
+%{_presetdir}/86-clamav-daemon.preset
+%{_unitdir}/clamav-daemon.service
+%{_unitdir}/clamav-daemon.socket
 
 %files -n clamd
 %doc AUTHORS README
@@ -395,7 +407,6 @@ done
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}
 %config /var/lib/%{name}/*cvd
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}/tmp
-
 
 %files -n %{libname}
 %doc AUTHORS README
