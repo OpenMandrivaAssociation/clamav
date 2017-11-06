@@ -54,6 +54,8 @@ BuildRequires:	ncurses-devel
 BuildRequires:	tommath-devel
 BuildRequires:	zlib-devel
 BuildRequires:	pkgconfig(libsystemd)
+BuildRequires:	pkgconfig(libxml-2.0)
+BuildRequires:	pkgconfig(openssl)
 %if %{milter}
 BuildRequires:	sendmail-devel
 BuildRequires:	tcp_wrappers-devel
