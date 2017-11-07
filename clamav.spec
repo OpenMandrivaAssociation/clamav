@@ -48,14 +48,17 @@ Requires(post,preun):	%{name}-db
 Requires(post,preun):	%{libname} >= %{version}
 Requires(pre,post,post,postun):	rpm-helper
 BuildRequires:	bc
+BuildRequires:	bison
+BuildRequires:	flex
 BuildRequires:	bzip2-devel
-BuildRequires:	curl-devel
-BuildRequires:	ncurses-devel
 BuildRequires:	tommath-devel
-BuildRequires:	zlib-devel
+BuildRequires:	pkgconfig(libcurl)
+BuildRequires:	pkgconfig(ncurses)
+BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(libsystemd)
 BuildRequires:	pkgconfig(libxml-2.0)
 BuildRequires:	pkgconfig(openssl)
+BuildRequires:	pkgconfig(check)
 %if %{milter}
 BuildRequires:	sendmail-devel
 BuildRequires:	tcp_wrappers-devel
