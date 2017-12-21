@@ -36,6 +36,7 @@ Source8:	%{name}-milter.logrotate
 # clamd service fails to start on clean systems without these files
 Source10:	http://db.local.clamav.net/main.cvd
 Source11:	http://db.local.clamav.net/daily.cvd
+Source12:	http://db.local.clamav.net/bytecode.cvd
 Source100:	%{name}.rpmlintrc
 Patch0:		%{name}-mdv_conf.diff
 Patch1:		clamav-0.99.2-openssl-1.1.patch
@@ -221,7 +222,6 @@ EOF
 #install tmpfiles
 install -D -p -m 644 %{SOURCE1} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 
-
 # install the logrotate stuff
 install -d %{buildroot}%{_sysconfdir}/logrotate.d
 install -m644 OMV/%{name}-clamd.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/clamd
@@ -246,6 +246,7 @@ install -m644 etc/freshclam.conf.sample %{buildroot}%{_sysconfdir}/freshclam.con
 # database files
 install -D -m 0644 -p %{SOURCE10} %{buildroot}/var/lib/%{name}/main.cvd
 install -D -m 0644 -p %{SOURCE11} %{buildroot}/var/lib/%{name}/daily.cvd
+install -D -m 0644 -p %{SOURCE12} %{buildroot}/var/lib/%{name}/bytecode.cvd
 
 # pid file dir
 install -d %{buildroot}%{_var}/run/%{name}
@@ -278,8 +279,8 @@ chown -R qscand:qscand /var/lib/%{name}
 chown -R qscand:qscand %{_var}/log/%{name}
 chown -R qscand:qscand %{_var}/run/%{name}
 
-systemctl restart clamd.service
-systemctl restart freshclam.service
+systemctl try-restart clamd.service
+systemctl try-restart freshclam.service
 
 # Regards // OpenMandriva Association
 EOF
