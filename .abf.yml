@@ -1,5 +1,5 @@
 sources:
-  clamav-0.99.1-norar.tar.xz: c7b7123efc1d85e1ea947cdfa00653865ec23d59
   clamav-0.99.2-norar.tar.xz: 14d189d41a2e72d1db0ae011646c08627ccf06d9
-  main.cvd: b65423ee9a3a4fc1215ad330387e8827d9528991
-  daily.cvd: 563b85e19347b882061dddc09f339c3f2bd81520
+  main.cvd: d275ad7d79af6ecf602d8813173a0bb0a0a00a88
+  daily.cvd: e9e861cf121f3928fb3be6d8b447dfa68637a61a
+  bytecode.cvd: 0bade0320b86af8126b0a6418d82b8bb0b72e51d
