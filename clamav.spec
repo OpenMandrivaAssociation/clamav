@@ -52,6 +52,7 @@ BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	bzip2-devel
 BuildRequires:	tommath-devel
+BuildRequires:	libltdl-devel
 BuildRequires:	pkgconfig(libcurl)
 BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(zlib)
