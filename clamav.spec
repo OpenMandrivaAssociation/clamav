@@ -52,6 +52,7 @@ BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	bzip2-devel
 BuildRequires:	tommath-devel
+BuildRequires:	libltdl-devel
 BuildRequires:	pkgconfig(libcurl)
 BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(zlib)
@@ -205,7 +206,7 @@ cat > %{buildroot}%{_presetdir}/86-clamav-daemon.preset << EOF
 enable %{name}-daemon.socket
 EOF
 
-cat > %{buildroot}%{_presetdir}/86-freshclam.preset << EOF
+cat > %{buildroot}%{_presetdir}/86-clamav-freshclam.preset << EOF
 enable %{name}-freshclam.service
 EOF
 
@@ -289,7 +290,9 @@ from Eugene Roshal of RARlabs. There is also patent issues involved.
 Therefore we have been forced to remove the offending code.
 EOF
 
+%if %{mdvver} <= 3000000
 %multiarch_binaries %{buildroot}%{_bindir}/%{name}-config
+%endif
 
 # cleanup
 rm -f %{buildroot}%{_libdir}/*.*a
@@ -349,7 +352,7 @@ done
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/freshclam.conf*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/freshclam
-%{_presetdir}/86-freshclam.preset
+%{_presetdir}/86-clamav-freshclam.preset
 %{_unitdir}/%{name}-freshclam.service
 %{_tmpfilesdir}/%{name}.conf
 %{_bindir}/clambc
@@ -413,7 +416,9 @@ done
 
 %files -n %{develname}
 %doc AUTHORS README
+%if %{mdvver} <= 3000000
 %{multiarch_bindir}/%{name}-config
+%endif
 %{_bindir}/%{name}-config
 %{_includedir}/*
 %{_libdir}/*.so
