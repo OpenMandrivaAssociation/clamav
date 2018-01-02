@@ -196,7 +196,7 @@ export have_cv_ipv6=yes
 # anti rpath hack
 perl -pi -e "s|^sys_lib_dlsearch_path_spec=.*|sys_lib_dlsearch_path_spec=\"/%{_lib} %{_libdir}\"|g" libtool
 
-%make -j1
+%make
 
 %install
 %makeinstall_std
