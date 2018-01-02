@@ -12,7 +12,7 @@
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.99.2
-Release:	3
+Release:	4
 License:	GPLv2+
 Group:		File tools
 URL:		http://clamav.sourceforge.net/
@@ -27,9 +27,7 @@ URL:		http://clamav.sourceforge.net/
 # and repackages it.
 Source0:	%{name}-%{version}-norar.tar.xz
 Source1:	clamd-tmpfiles.conf
-Source2:	%{name}-clamd.service
 Source3:	%{name}-clamd.logrotate
-Source4:	%{name}-freshclam.service
 Source5:	%{name}-freshclam.logrotate
 Source6:	%{name}-milter.service
 Source8:	%{name}-milter.logrotate
@@ -40,6 +38,7 @@ Source12:	http://db.local.clamav.net/bytecode.cvd
 Source100:	%{name}.rpmlintrc
 Patch0:		%{name}-mdv_conf.diff
 Patch1:		clamav-0.99.2-openssl-1.1.patch
+Patch2:		clamav-0.99.2-fix-zlib-version-check.patch
 Patch10:	%{name}-0.99-private.patch
 Patch13:	%{name}-0.98-umask.patch
 # Fixed in this release
@@ -60,6 +59,7 @@ BuildRequires:	pkgconfig(libsystemd)
 BuildRequires:	pkgconfig(libxml-2.0)
 BuildRequires:	pkgconfig(openssl)
 BuildRequires:	pkgconfig(check)
+BuildRequires:	pkgconfig(libpcre)
 %if %{milter}
 BuildRequires:	sendmail-devel
 BuildRequires:	tcp_wrappers-devel
@@ -80,6 +80,7 @@ You can build %{name} with some conditional build switches; (ie. use with rpm
 Summary:	The Clam AntiVirus Daemon
 Group:		System/Servers
 Requires:	%{name} = %{version}
+Conflicts:	%{name} < 0.99.2-4
 Requires(post,preun):	%{name}-db
 Requires(post,preun):	%{libname} = %{version}
 Requires(pre,post):	rpm-helper
@@ -113,7 +114,6 @@ Requires(pre,post):	rpm-helper
 %description -n	%{name}-db
 The actual virus database for %{name}.
 
-
 %package -n %{libname}
 Summary:	Shared libraries for %{name}
 Group:		System/Libraries
@@ -138,9 +138,9 @@ This package contains the development library and header files for the
 %prep
 %setup -q -n %{name}-%{version}
 %apply_patches
-aclocal
-automake -a
-autoconf
+
+# (tpg) needed for patch2
+autoreconf -vfi
 
 # clean up
 for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type f -name .#\*` `find . -type d -name .svn`; do
@@ -180,10 +180,12 @@ export have_cv_ipv6=yes
     --enable-id-check \
     --enable-clamuko \
     --enable-bigstack \
+    --enable-fanotify \
     --disable-llvm \
     --with-zlib=%{_prefix} \
     --with-libbz2-prefix=%{_prefix} \
     --with-system-tommath \
+    --with-pcre \
 %if %{milter}
     --enable-milter --with-tcpwrappers
 %else
@@ -198,13 +200,9 @@ perl -pi -e "s|^sys_lib_dlsearch_path_spec=.*|sys_lib_dlsearch_path_spec=\"/%{_l
 %install
 %makeinstall_std
 
-# install the init scripts
-install -D -p -m 644 %{SOURCE2} %{buildroot}%{_unitdir}/%{name}-clamd.service
-install -D -p -m 644 %{SOURCE4} %{buildroot}%{_unitdir}/%{name}-freshclam.service
-
 install -d %{buildroot}%{_presetdir}
-cat > %{buildroot}%{_presetdir}/86-clamd.preset << EOF
-enable %{name}-clamd.service
+cat > %{buildroot}%{_presetdir}/86-clamav-daemon.preset << EOF
+enable %{name}-daemon.socket
 EOF
 
 cat > %{buildroot}%{_presetdir}/86-freshclam.preset << EOF
@@ -279,8 +277,8 @@ chown -R qscand:qscand /var/lib/%{name}
 chown -R qscand:qscand %{_var}/log/%{name}
 chown -R qscand:qscand %{_var}/run/%{name}
 
-systemctl try-restart clamd.service
-systemctl try-restart freshclam.service
+systemctl try-restart clamav-daemon.socket
+systemctl try-restart clamav-freshclam.service
 
 # Regards // OpenMandriva Association
 EOF
@@ -292,11 +290,6 @@ Therefore we have been forced to remove the offending code.
 EOF
 
 %multiarch_binaries %{buildroot}%{_bindir}/%{name}-config
-
-install -d %{buildroot}%{_presetdir}
-cat > %{buildroot}%{_presetdir}/86-clamav-daemon.preset << EOF
-enable clamav-daemon.socket
-EOF
 
 # cleanup
 rm -f %{buildroot}%{_libdir}/*.*a
@@ -310,19 +303,21 @@ fi
 
 %post
 %create_ghostfile %{_var}/log/%{name}/freshclam.log %{name} %{name} 0644
-%systemd_post clamav-daemon
+%systemd_post %{name}-freshclam.service
 
 %preun
-%systemd_preun clamav-daemon
+%systemd_preun clamav-daemon.socket
 
 %pre -n clamd
 %_pre_useradd %{name} /var/lib/%{name} /bin/sh
 
 %post -n clamd
 %create_ghostfile %{_var}/log/%{name}/clamd.log %{name} %{name} 0644
+%systemd_post %{name}-daemon.socket
 
 %postun -n clamd
 %_postun_userdel %{name}
+%systemd_preun %{name}-daemon.socket
 
 %if %{milter}
 %post -n %{name}-milter
@@ -382,15 +377,13 @@ done
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}
 %dir %attr(0775,%{name},%{name}) %{_var}/log/%{name}
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/freshclam.log
-%{_presetdir}/86-clamav-daemon.preset
-%{_unitdir}/clamav-daemon.service
-%{_unitdir}/clamav-daemon.socket
 
 %files -n clamd
 %doc AUTHORS README
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/clamd
-%{_presetdir}/86-clamd.preset
-%{_unitdir}/%{name}-clamd.service
+%{_presetdir}/86-clamav-daemon.preset
+%{_unitdir}/clamav-daemon.service
+%{_unitdir}/clamav-daemon.socket
 %{_sbindir}/clamd
 %{_mandir}/man8/clamd.8*
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/clamd.log
