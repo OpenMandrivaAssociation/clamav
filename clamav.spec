@@ -11,21 +11,12 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.99.2
-Release:	4
+Version:	0.99.3
+Release:	1
 License:	GPLv2+
 Group:		File tools
-URL:		http://clamav.sourceforge.net/
-#Source1:	http://www.clamav.net/%%{name}-%%{version}.tar.gz.sig
-# clamav-0.95+ bundles support for RAR v3 in "libclamav" without permission,
-# from Eugene Roshal of RARlabs. There is also patent issues involved.
-#
-# https://bugzilla.redhat.com/show_bug.cgi?id=334371
-# http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=312552
-#
-# Both Redhat and debian removes this code from the upstream tar ball
-# and repackages it.
-Source0:	%{name}-%{version}-norar.tar.xz
+URL:		http://www.clamav.net/
+Source0:	http://www.clamav.net/downloads/production/clamav-%{version}.tar.gz
 Source1:	clamd-tmpfiles.conf
 Source3:	%{name}-clamd.logrotate
 Source5:	%{name}-freshclam.logrotate
@@ -37,8 +28,6 @@ Source11:	http://db.local.clamav.net/daily.cvd
 Source12:	http://db.local.clamav.net/bytecode.cvd
 Source100:	%{name}.rpmlintrc
 Patch0:		%{name}-mdv_conf.diff
-Patch1:		clamav-0.99.2-openssl-1.1.patch
-Patch2:		clamav-0.99.2-fix-zlib-version-check.patch
 Patch10:	%{name}-0.99-private.patch
 Patch13:	%{name}-0.98-umask.patch
 # Fixed in this release
