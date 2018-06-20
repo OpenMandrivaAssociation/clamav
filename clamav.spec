@@ -50,6 +50,7 @@ BuildRequires:	pkgconfig(libxml-2.0)
 BuildRequires:	pkgconfig(openssl)
 BuildRequires:	pkgconfig(check)
 BuildRequires:	pkgconfig(libpcre)
+BuildRequires:	pkgconfig(json-c)
 %if %{milter}
 BuildRequires:	sendmail-devel
 BuildRequires:	tcp_wrappers-devel
