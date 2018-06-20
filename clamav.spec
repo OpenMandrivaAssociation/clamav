@@ -11,7 +11,7 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.99.3
+Version:	0.100.0
 Release:	1
 License:	GPLv2+
 Group:		File tools
@@ -335,7 +335,6 @@ done
 %_postun_userdel %{name}
 
 %files
-%doc AUTHORS BUGS FAQ NEWS README test UPGRADE README.urpmi
 %doc docs/*.pdf
 %doc README.qmail+qmail-scanner COPYING*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf*
@@ -371,7 +370,6 @@ done
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/freshclam.log
 
 %files -n clamd
-%doc AUTHORS README
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/clamd
 %{_presetdir}/86-clamav-daemon.preset
 %{_unitdir}/clamav-daemon.service
@@ -382,7 +380,6 @@ done
 
 %if %{milter}
 %files -n %{name}-milter
-%doc AUTHORS README
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-milter.conf*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}-milter
 %{_presetdir}/86-milter.preset
@@ -394,17 +391,15 @@ done
 %endif
 
 %files -n %{name}-db
-%doc AUTHORS README
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}
 %config /var/lib/%{name}/*cvd
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}/tmp
 
 %files -n %{libname}
-%doc AUTHORS README
 %{_libdir}/*.so.%{major}*
+%{_libdir}/*.so.0*
 
 %files -n %{develname}
-%doc AUTHORS README
 %if %{mdvver} <= 3000000
 %{multiarch_bindir}/%{name}-config
 %endif
@@ -412,3 +407,4 @@ done
 %{_includedir}/*
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/libclamav.pc
+%{_libdir}/pkgconfig/libclammspack.pc
