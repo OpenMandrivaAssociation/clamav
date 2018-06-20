@@ -12,7 +12,7 @@
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.100.0
-Release:	1
+Release:	2
 License:	GPLv2+
 Group:		File tools
 URL:		http://www.clamav.net/
@@ -42,6 +42,7 @@ BuildRequires:	flex
 BuildRequires:	bzip2-devel
 BuildRequires:	tommath-devel
 BuildRequires:	libltdl-devel
+BuildRequires:	rpm-helper
 BuildRequires:	pkgconfig(libcurl)
 BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(zlib)
