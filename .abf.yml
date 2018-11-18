@@ -3,5 +3,5 @@ removed_sources:
 sources:
   bytecode.cvd: 733652e460cdb26759814dc43d86a3034f2c34d1
   clamav-0.100.2.tar.gz: 3a228ad45970ab3b1424fb4cfa03ad0d0c765133
-  daily.cvd: 092a8ae93f7044437de1a93506d6a85fa8ceba8a
-  main.cvd: b65423ee9a3a4fc1215ad330387e8827d9528991
+  daily.cvd: 606a4ac2485766f4dfada47ca468f81df098427b
+  main.cvd: d275ad7d79af6ecf602d8813173a0bb0a0a00a88
