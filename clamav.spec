@@ -11,21 +11,12 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.99.2
-Release:	4
+Version:	0.100.2
+Release:	1
 License:	GPLv2+
 Group:		File tools
-URL:		http://clamav.sourceforge.net/
-#Source1:	http://www.clamav.net/%%{name}-%%{version}.tar.gz.sig
-# clamav-0.95+ bundles support for RAR v3 in "libclamav" without permission,
-# from Eugene Roshal of RARlabs. There is also patent issues involved.
-#
-# https://bugzilla.redhat.com/show_bug.cgi?id=334371
-# http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=312552
-#
-# Both Redhat and debian removes this code from the upstream tar ball
-# and repackages it.
-Source0:	%{name}-%{version}-norar.tar.xz
+URL:		http://www.clamav.net/
+Source0:	http://www.clamav.net/downloads/production/clamav-%{version}.tar.gz
 Source1:	clamd-tmpfiles.conf
 Source3:	%{name}-clamd.logrotate
 Source5:	%{name}-freshclam.logrotate
@@ -37,8 +28,6 @@ Source11:	http://db.local.clamav.net/daily.cvd
 Source12:	http://db.local.clamav.net/bytecode.cvd
 Source100:	%{name}.rpmlintrc
 Patch0:		%{name}-mdv_conf.diff
-Patch1:		clamav-0.99.2-openssl-1.1.patch
-Patch2:		clamav-0.99.2-fix-zlib-version-check.patch
 Patch10:	%{name}-0.99-private.patch
 Patch13:	%{name}-0.98-umask.patch
 # Fixed in this release
@@ -53,6 +42,7 @@ BuildRequires:	flex
 BuildRequires:	bzip2-devel
 BuildRequires:	tommath-devel
 BuildRequires:	libltdl-devel
+BuildRequires:	rpm-helper
 BuildRequires:	pkgconfig(libcurl)
 BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(zlib)
@@ -61,6 +51,8 @@ BuildRequires:	pkgconfig(libxml-2.0)
 BuildRequires:	pkgconfig(openssl)
 BuildRequires:	pkgconfig(check)
 BuildRequires:	pkgconfig(libpcre)
+BuildRequires:	pkgconfig(json-c)
+BuildRequires:	systemd
 %if %{milter}
 BuildRequires:	sendmail-devel
 BuildRequires:	tcp_wrappers-devel
@@ -346,7 +338,6 @@ done
 %_postun_userdel %{name}
 
 %files
-%doc AUTHORS BUGS FAQ NEWS README test UPGRADE README.urpmi
 %doc docs/*.pdf
 %doc README.qmail+qmail-scanner COPYING*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf*
@@ -382,7 +373,6 @@ done
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/freshclam.log
 
 %files -n clamd
-%doc AUTHORS README
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/clamd
 %{_presetdir}/86-clamav-daemon.preset
 %{_unitdir}/clamav-daemon.service
@@ -393,7 +383,6 @@ done
 
 %if %{milter}
 %files -n %{name}-milter
-%doc AUTHORS README
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-milter.conf*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}-milter
 %{_presetdir}/86-milter.preset
@@ -405,17 +394,15 @@ done
 %endif
 
 %files -n %{name}-db
-%doc AUTHORS README
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}
 %config /var/lib/%{name}/*cvd
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}/tmp
 
 %files -n %{libname}
-%doc AUTHORS README
 %{_libdir}/*.so.%{major}*
+%{_libdir}/*.so.0*
 
 %files -n %{develname}
-%doc AUTHORS README
 %if %{mdvver} <= 3000000
 %{multiarch_bindir}/%{name}-config
 %endif
@@ -423,3 +410,4 @@ done
 %{_includedir}/*
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/libclamav.pc
+%{_libdir}/pkgconfig/libclammspack.pc
