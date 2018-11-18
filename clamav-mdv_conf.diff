@@ -295,8 +295,8 @@ diff -up clamav-0.100.0/etc/freshclam.conf.sample.0000~ clamav-0.100.0/etc/fresh
 -#DNSDatabaseInfo current.cvd.clamav.net
 +DNSDatabaseInfo current.cvd.clamav.net
  
- # Uncomment the following line and replace XY with your country
- # code. See https://www.iana.org/domains/root/db for the full list.
+ # database.clamav.net is now the primary domain name to be used world-wide.
+ # Now that CloudFlare is being used as our Content Delivery Network (CDN), 
 @@ -76,12 +74,12 @@ DatabaseMirror database.clamav.net
  
  # How many attempts to make before giving up.
