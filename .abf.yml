@@ -1,7 +1,5 @@
-removed_sources:
-  clamav-0.100.1.tar.gz: fb989218e68dd3d171ef23f45a19c0d09360eab1
 sources:
   bytecode.cvd: 733652e460cdb26759814dc43d86a3034f2c34d1
-  clamav-0.100.2.tar.gz: 3a228ad45970ab3b1424fb4cfa03ad0d0c765133
+  clamav-0.101.3.tar.gz: f2e86f3d18b336cf2fecf42da80c7a4bd9ec3068
   daily.cvd: 606a4ac2485766f4dfada47ca468f81df098427b
   main.cvd: d275ad7d79af6ecf602d8813173a0bb0a0a00a88

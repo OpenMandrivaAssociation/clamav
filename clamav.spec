@@ -1,4 +1,4 @@
-%define major 7
+%define major 9
 %define libname %mklibname %{name} %{major}
 %define develname %mklibname %{name} -d
 
@@ -11,7 +11,7 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.100.2
+Version:	0.101.3
 Release:	1
 License:	GPLv2+
 Group:		File tools
@@ -282,10 +282,6 @@ from Eugene Roshal of RARlabs. There is also patent issues involved.
 Therefore we have been forced to remove the offending code.
 EOF
 
-%if %{mdvver} <= 3000000
-%multiarch_binaries %{buildroot}%{_bindir}/%{name}-config
-%endif
-
 # cleanup
 rm -f %{buildroot}%{_libdir}/*.*a
 
@@ -338,7 +334,6 @@ done
 %_postun_userdel %{name}
 
 %files
-%doc docs/*.pdf
 %doc README.qmail+qmail-scanner COPYING*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/freshclam.conf*
@@ -403,11 +398,7 @@ done
 %{_libdir}/*.so.0*
 
 %files -n %{develname}
-%if %{mdvver} <= 3000000
-%{multiarch_bindir}/%{name}-config
-%endif
 %{_bindir}/%{name}-config
 %{_includedir}/*
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/libclamav.pc
-%{_libdir}/pkgconfig/libclammspack.pc

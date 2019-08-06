@@ -1,6 +1,7 @@
-diff -up clamav-0.100.0/etc/clamav-milter.conf.sample.0000~ clamav-0.100.0/etc/clamav-milter.conf.sample
---- clamav-0.100.0/etc/clamav-milter.conf.sample.0000~	2018-04-04 02:13:58.000000000 +0200
-+++ clamav-0.100.0/etc/clamav-milter.conf.sample	2018-06-20 21:39:49.518249698 +0200
+diff --git a/etc/clamav-milter.conf.sample b/etc/clamav-milter.conf.sample
+index c61012c..870f444 100644
+--- a/etc/clamav-milter.conf.sample
++++ b/etc/clamav-milter.conf.sample
 @@ -2,10 +2,6 @@
  ## Example config file for clamav-milter
  ##
@@ -78,9 +79,10 @@ diff -up clamav-0.100.0/etc/clamav-milter.conf.sample.0000~ clamav-0.100.0/etc/c
  
  # Enable log rotation. Always enabled when LogFileMaxSize is enabled.
  # Default: no
-diff -up clamav-0.100.0/etc/clamd.conf.sample.0000~ clamav-0.100.0/etc/clamd.conf.sample
---- clamav-0.100.0/etc/clamd.conf.sample.0000~	2018-04-04 02:13:58.000000000 +0200
-+++ clamav-0.100.0/etc/clamd.conf.sample	2018-06-20 21:41:17.631244843 +0200
+diff --git a/etc/clamd.conf.sample b/etc/clamd.conf.sample
+index 1181a78..7718455 100644
+--- a/etc/clamd.conf.sample
++++ b/etc/clamd.conf.sample
 @@ -3,15 +3,11 @@
  ## Please read the clamd.conf(5) manual before editing this file.
  ##
@@ -186,7 +188,7 @@ diff -up clamav-0.100.0/etc/clamd.conf.sample.0000~ clamav-0.100.0/etc/clamd.con
  
  # Don't fork into background.
  # Default: no
-@@ -273,7 +270,7 @@ Example
+@@ -332,7 +329,7 @@ Example
  # and Petite. If you turn off this option, the original files will still be
  # scanned, but without additional processing.
  # Default: yes
@@ -195,16 +197,16 @@ diff -up clamav-0.100.0/etc/clamd.conf.sample.0000~ clamav-0.100.0/etc/clamd.con
  
  # Certain PE files contain an authenticode signature. By default, we check
  # the signature chain in the PE file against a database of trusted and
-@@ -307,7 +304,7 @@ Example
+@@ -361,7 +358,7 @@ Example
  # If you turn off this option, the original files will still be scanned, but
  # without additional processing.
  # Default: yes
 -#ScanOLE2 yes
 +ScanOLE2 yes
  
- # With this option enabled OLE2 files with VBA macros, which were not
- # detected by signatures will be marked as "Heuristics.OLE2.ContainsMacros".
-@@ -347,7 +344,7 @@ Example
+ # This option enables scanning within PDF files.
+ # If you turn off this option, the original files will still be scanned, but
+@@ -396,7 +393,7 @@ Example
  # If you turn off this option, the original files will still be scanned, but
  # without parsing individual messages/attachments.
  # Default: yes
@@ -213,16 +215,16 @@ diff -up clamav-0.100.0/etc/clamd.conf.sample.0000~ clamav-0.100.0/etc/clamd.con
  
  # Scan RFC1341 messages split over many emails.
  # You will need to periodically clean up $TemporaryDirectory/clamav-partial
-@@ -360,7 +357,7 @@ Example
+@@ -409,7 +406,7 @@ Example
  # With this option enabled ClamAV will try to detect phishing attempts by using
- # signatures.
+ # HTML.Phishing and Email.Phishing NDB signatures.
  # Default: yes
--#PhishingSignatures yes
+-#PhishingSignatures no
 +PhishingSignatures yes
  
- # Scan URLs found in mails for phishing attempts using heuristics.
- # Default: yes
-@@ -436,7 +433,7 @@ Example
+ # With this option enabled ClamAV will try to detect phishing attempts by
+ # analyzing URLs found in emails using WDB and PDB signature databases.
+@@ -454,7 +451,7 @@ Example
  # Default: yes
  # If you turn off this option, the original files will still be scanned, but
  # without additional processing.
@@ -231,18 +233,19 @@ diff -up clamav-0.100.0/etc/clamd.conf.sample.0000~ clamav-0.100.0/etc/clamd.con
  
  
  ##
-@@ -447,7 +444,7 @@ Example
+@@ -465,7 +462,7 @@ Example
  # If you turn off this option, the original files will still be scanned, but
  # without unpacking and additional processing.
  # Default: yes
 -#ScanArchive yes
 +ScanArchive yes
  
- # Mark encrypted archives as viruses (Encrypted.Zip, Encrypted.RAR).
- # Default: no
-diff -up clamav-0.100.0/etc/freshclam.conf.sample.0000~ clamav-0.100.0/etc/freshclam.conf.sample
---- clamav-0.100.0/etc/freshclam.conf.sample.0000~	2018-04-04 02:13:58.000000000 +0200
-+++ clamav-0.100.0/etc/freshclam.conf.sample	2018-06-20 21:42:09.391241990 +0200
+ 
+ ##
+diff --git a/etc/freshclam.conf.sample b/etc/freshclam.conf.sample
+index a3271a6..d9479f2 100644
+--- a/etc/freshclam.conf.sample
++++ b/etc/freshclam.conf.sample
 @@ -3,18 +3,14 @@
  ## Please read the freshclam.conf(5) manual before editing this file.
  ##
@@ -296,8 +299,8 @@ diff -up clamav-0.100.0/etc/freshclam.conf.sample.0000~ clamav-0.100.0/etc/fresh
 +DNSDatabaseInfo current.cvd.clamav.net
  
  # database.clamav.net is now the primary domain name to be used world-wide.
- # Now that CloudFlare is being used as our Content Delivery Network (CDN), 
-@@ -76,12 +74,12 @@ DatabaseMirror database.clamav.net
+ # Now that CloudFlare is being used as our Content Delivery Network (CDN),
+@@ -71,12 +69,12 @@ DatabaseMirror database.clamav.net
  
  # How many attempts to make before giving up.
  # Default: 3 (per mirror)
@@ -312,7 +315,7 @@ diff -up clamav-0.100.0/etc/freshclam.conf.sample.0000~ clamav-0.100.0/etc/fresh
  
  # By default freshclam will keep the local databases (.cld) uncompressed to
  # make their handling faster. With this option you can enable the compression;
-@@ -110,7 +108,7 @@ DatabaseMirror database.clamav.net
+@@ -105,7 +103,7 @@ DatabaseMirror database.clamav.net
  
  # Number of database checks per day.
  # Default: 12 (every two hours)
@@ -321,7 +324,7 @@ diff -up clamav-0.100.0/etc/freshclam.conf.sample.0000~ clamav-0.100.0/etc/fresh
  
  # Proxy settings
  # Default: disabled
-@@ -132,7 +130,7 @@ DatabaseMirror database.clamav.net
+@@ -127,7 +125,7 @@ DatabaseMirror database.clamav.net
  
  # Send the RELOAD command to clamd.
  # Default: no
