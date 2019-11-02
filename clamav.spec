@@ -156,6 +156,7 @@ cp %{SOURCE8} OMV/clamav-milter.logrotate
 
 %build
 %serverbuild
+export LDFLAGS="%{optflags} -lz"
 export CFLAGS="$CFLAGS -I%{_includedir}/tommath"
 
 # IPv6 check is buggy and does not work when there are no IPv6 interface on build machine
