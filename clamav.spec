@@ -162,7 +162,6 @@ export CFLAGS="$CFLAGS -I%{_includedir}/tommath"
 
 # IPv6 check is buggy and does not work when there are no IPv6 interface on build machine
 export have_cv_ipv6=yes
-
 %configure \
     --localstatedir=/var/lib \
     --disable-%{name} \
@@ -177,8 +176,6 @@ export have_cv_ipv6=yes
     --enable-bigstack \
     --enable-fanotify \
     --disable-llvm \
-    --enable-zlib-vcheck \
-    --with-zlib=%{_prefix} \
     --with-libbz2-prefix=%{_prefix} \
     --with-system-tommath \
     --with-pcre \
