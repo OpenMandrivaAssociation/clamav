@@ -177,6 +177,7 @@ export have_cv_ipv6=yes
     --enable-bigstack \
     --enable-fanotify \
     --disable-llvm \
+    --enable-zlib-vcheck \
     --with-zlib=%{_prefix} \
     --with-libbz2-prefix=%{_prefix} \
     --with-system-tommath \
