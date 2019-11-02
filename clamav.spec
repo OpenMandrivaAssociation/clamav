@@ -53,6 +53,7 @@ BuildRequires:	pkgconfig(check)
 BuildRequires:	pkgconfig(libpcre)
 BuildRequires:	pkgconfig(json-c)
 BuildRequires:	systemd
+BuildRequires:	zlib
 %if %{milter}
 BuildRequires:	sendmail-devel
 BuildRequires:	tcp_wrappers-devel
