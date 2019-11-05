@@ -11,7 +11,7 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.101.4
+Version:	0.102.0
 Release:	1
 License:	GPLv2+
 Group:		File tools
@@ -53,6 +53,7 @@ BuildRequires:	pkgconfig(check)
 BuildRequires:	pkgconfig(libpcre)
 BuildRequires:	pkgconfig(json-c)
 BuildRequires:	systemd
+BuildRequires:	zlib
 %if %{milter}
 BuildRequires:	sendmail-devel
 BuildRequires:	tcp_wrappers-devel
@@ -156,11 +157,11 @@ cp %{SOURCE8} OMV/clamav-milter.logrotate
 
 %build
 %serverbuild
+export LDFLAGS="%{optflags} -lz"
 export CFLAGS="$CFLAGS -I%{_includedir}/tommath"
 
 # IPv6 check is buggy and does not work when there are no IPv6 interface on build machine
 export have_cv_ipv6=yes
-
 %configure \
     --localstatedir=/var/lib \
     --disable-%{name} \
@@ -175,7 +176,6 @@ export have_cv_ipv6=yes
     --enable-bigstack \
     --enable-fanotify \
     --disable-llvm \
-    --with-zlib=%{_prefix} \
     --with-libbz2-prefix=%{_prefix} \
     --with-system-tommath \
     --with-pcre \
@@ -188,10 +188,10 @@ export have_cv_ipv6=yes
 # anti rpath hack
 perl -pi -e "s|^sys_lib_dlsearch_path_spec=.*|sys_lib_dlsearch_path_spec=\"/%{_lib} %{_libdir}\"|g" libtool
 
-%make
+%make_build
 
 %install
-%makeinstall_std
+%make_install
 
 install -d %{buildroot}%{_presetdir}
 cat > %{buildroot}%{_presetdir}/86-clamav-daemon.preset << EOF
@@ -341,6 +341,7 @@ done
 %{_presetdir}/86-clamav-freshclam.preset
 %{_unitdir}/%{name}-freshclam.service
 %{_tmpfilesdir}/%{name}.conf
+%{_bindir}/clamonacc
 %{_bindir}/clambc
 %{_bindir}/clamconf
 %{_bindir}/clamdscan
@@ -378,11 +379,11 @@ done
 
 %if %{milter}
 %files -n %{name}-milter
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-milter.conf*
+#attr(0644,root,root) %config(noreplace) #{_sysconfdir}/%{name}-milter.conf*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}-milter
 %{_presetdir}/86-milter.preset
 %{_unitdir}/%{name}-milter.service
-%{_sbindir}/%{name}-milter
+#{_sbindir}/%{name}-milter
 %{_mandir}/man8/%{name}-milter.8*
 %{_mandir}/man5/%{name}-milter.conf.5*
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/%{name}-milter.log
@@ -396,6 +397,7 @@ done
 %files -n %{libname}
 %{_libdir}/*.so.%{major}*
 %{_libdir}/*.so.0*
+%{_libdir}/libfreshclam.so.*
 
 %files -n %{develname}
 %{_bindir}/%{name}-config
