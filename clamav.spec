@@ -188,10 +188,10 @@ export have_cv_ipv6=yes
 # anti rpath hack
 perl -pi -e "s|^sys_lib_dlsearch_path_spec=.*|sys_lib_dlsearch_path_spec=\"/%{_lib} %{_libdir}\"|g" libtool
 
-%make
+%make_build
 
 %install
-%makeinstall_std
+%make_install
 
 install -d %{buildroot}%{_presetdir}
 cat > %{buildroot}%{_presetdir}/86-clamav-daemon.preset << EOF
@@ -341,6 +341,7 @@ done
 %{_presetdir}/86-clamav-freshclam.preset
 %{_unitdir}/%{name}-freshclam.service
 %{_tmpfilesdir}/%{name}.conf
+%{_bindir}/clamonacc
 %{_bindir}/clambc
 %{_bindir}/clamconf
 %{_bindir}/clamdscan
@@ -396,6 +397,7 @@ done
 %files -n %{libname}
 %{_libdir}/*.so.%{major}*
 %{_libdir}/*.so.0*
+%{_libdir}/libfreshclam.so.*
 
 %files -n %{develname}
 %{_bindir}/%{name}-config
