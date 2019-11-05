@@ -378,11 +378,11 @@ done
 
 %if %{milter}
 %files -n %{name}-milter
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-milter.conf*
+#attr(0644,root,root) %config(noreplace) #{_sysconfdir}/%{name}-milter.conf*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}-milter
 %{_presetdir}/86-milter.preset
 %{_unitdir}/%{name}-milter.service
-%{_sbindir}/%{name}-milter
+#{_sbindir}/%{name}-milter
 %{_mandir}/man8/%{name}-milter.8*
 %{_mandir}/man5/%{name}-milter.conf.5*
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/%{name}-milter.log
