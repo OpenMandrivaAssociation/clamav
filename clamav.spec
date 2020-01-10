@@ -131,7 +131,7 @@ This package contains the development library and header files for the
 
 %prep
 %setup -q -n %{name}-%{version}
-%apply_patches
+%autopatch -p1
 
 # (tpg) needed for patch2
 autoreconf -vfi
