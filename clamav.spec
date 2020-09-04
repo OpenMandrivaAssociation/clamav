@@ -1,6 +1,7 @@
 %define major 9
 %define libname %mklibname %{name} %{major}
 %define develname %mklibname %{name} -d
+%define debug_package %{nil}
 
 %define _disable_rebuild_configure 1
 %define _disable_lto 1
@@ -11,7 +12,7 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.102.0
+Version:	0.102.4
 Release:	1
 License:	GPLv2+
 Group:		File tools
@@ -381,9 +382,10 @@ done
 %files -n %{name}-milter
 #attr(0644,root,root) %config(noreplace) #{_sysconfdir}/%{name}-milter.conf*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}-milter
+%{_sysconfdir}/clamav-milter.conf.sample
 %{_presetdir}/86-milter.preset
 %{_unitdir}/%{name}-milter.service
-#{_sbindir}/%{name}-milter
+%{_sbindir}/%{name}-milter
 %{_mandir}/man8/%{name}-milter.8*
 %{_mandir}/man5/%{name}-milter.conf.5*
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/%{name}-milter.log
