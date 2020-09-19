@@ -12,7 +12,7 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.102.4
+Version:	0.103.0
 Release:	1
 License:	GPLv2+
 Group:		File tools
@@ -342,7 +342,8 @@ done
 %{_presetdir}/86-clamav-freshclam.preset
 %{_unitdir}/%{name}-freshclam.service
 %{_tmpfilesdir}/%{name}.conf
-%{_bindir}/clamonacc
+%{_unitdir}/clamav-clamonacc.service
+%{_sbindir}/clamonacc
 %{_bindir}/clambc
 %{_bindir}/clamconf
 %{_bindir}/clamdscan
@@ -361,6 +362,7 @@ done
 %{_mandir}/man1/sigtool.1*
 %{_mandir}/man5/clamd.conf.5*
 %{_mandir}/man5/freshclam.conf.5*
+%{_mandir}/man8/clamonacc.8*
 %if !%{milter}
 %exclude %{_mandir}/man8/%{name}-milter.8*
 %endif

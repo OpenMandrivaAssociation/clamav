@@ -1,19 +1,19 @@
-diff -up clamav-0.102.0/freshclam/freshclam.c clamav-0.102.0/freshclam/freshclam.c-angry
---- clamav-0.102.0/freshclam/freshclam.c        2019-10-01 19:24:08.000000000 +0200
-+++ clamav-0.102.0/freshclam/freshclam.c-angry  2019-11-02 02:14:31.667081297 +0100
-@@ -124,7 +124,7 @@ static void writepid(const char *pidfile
+diff -up clamav-0.103.0/freshclam/freshclam.c.3~ clamav-0.103.0/freshclam/freshclam.c
+--- clamav-0.103.0/freshclam/freshclam.c.3~	2020-09-19 16:55:15.032430843 +0200
++++ clamav-0.103.0/freshclam/freshclam.c	2020-09-19 16:56:04.130021827 +0200
+@@ -126,7 +126,7 @@ static int writepid(const char *pidfile)
  {
      FILE *fd;
      int old_umask;
--    old_umask = umask(0006);
+-    old_umask = umask(0002);
 +    old_umask = umask(0022);
      if ((fd = fopen(pidfile, "w")) == NULL) {
          logg("!Can't save PID to file %s: %s\n", pidfile, strerror(errno));
-     } else {
-diff -up clamav-0.102.0/shared/output.c clamav-0.102.0/shared/output.c-angry
---- clamav-0.102.0/shared/output.c      2019-10-01 19:24:09.000000000 +0200
-+++ clamav-0.102.0/shared/output.c-angry        2019-11-02 02:15:53.914082618 +0100
-@@ -359,7 +359,7 @@ int logg(const char *str, ...)
+         return 1;
+diff -up clamav-0.103.0/shared/output.c.3~ clamav-0.103.0/shared/output.c
+--- clamav-0.103.0/shared/output.c.3~	2020-09-13 02:27:10.000000000 +0200
++++ clamav-0.103.0/shared/output.c	2020-09-19 16:55:15.032430843 +0200
+@@ -357,7 +357,7 @@ int logg(const char *str, ...)
      logg_open();
  
      if (!logg_fp && logg_file) {
