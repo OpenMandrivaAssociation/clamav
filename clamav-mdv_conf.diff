@@ -1,6 +1,6 @@
-diff -up clamav-0.103.0/etc/clamav-milter.conf.sample.1~ clamav-0.103.0/etc/clamav-milter.conf.sample
---- clamav-0.103.0/etc/clamav-milter.conf.sample.1~	2020-09-13 02:27:09.000000000 +0200
-+++ clamav-0.103.0/etc/clamav-milter.conf.sample	2020-09-19 16:53:06.161903456 +0200
+diff -up clamav-0.103.1/etc/clamav-milter.conf.sample.1~ clamav-0.103.1/etc/clamav-milter.conf.sample
+--- clamav-0.103.1/etc/clamav-milter.conf.sample.1~	2021-02-01 21:49:25.000000000 +0100
++++ clamav-0.103.1/etc/clamav-milter.conf.sample	2021-02-04 22:41:59.833626600 +0100
 @@ -2,9 +2,6 @@
  ## Example config file for clamav-milter
  ##
@@ -78,9 +78,9 @@ diff -up clamav-0.103.0/etc/clamav-milter.conf.sample.1~ clamav-0.103.0/etc/clam
  
  # Enable log rotation. Always enabled when LogFileMaxSize is enabled.
  # Default: no
-diff -up clamav-0.103.0/etc/clamd.conf.sample.1~ clamav-0.103.0/etc/clamd.conf.sample
---- clamav-0.103.0/etc/clamd.conf.sample.1~	2020-09-13 02:27:09.000000000 +0200
-+++ clamav-0.103.0/etc/clamd.conf.sample	2020-09-19 16:53:50.146420540 +0200
+diff -up clamav-0.103.1/etc/clamd.conf.sample.1~ clamav-0.103.1/etc/clamd.conf.sample
+--- clamav-0.103.1/etc/clamd.conf.sample.1~	2021-02-01 21:49:25.000000000 +0100
++++ clamav-0.103.1/etc/clamd.conf.sample	2021-02-04 22:41:59.836959900 +0100
 @@ -4,14 +4,11 @@
  ##
  
@@ -185,7 +185,7 @@ diff -up clamav-0.103.0/etc/clamd.conf.sample.1~ clamav-0.103.0/etc/clamd.conf.s
  
  # Don't fork into background.
  # Default: no
-@@ -346,7 +344,7 @@ Example
+@@ -351,7 +349,7 @@ Example
  # and Petite. If you turn off this option, the original files will still be
  # scanned, but without additional processing.
  # Default: yes
@@ -194,7 +194,7 @@ diff -up clamav-0.103.0/etc/clamd.conf.sample.1~ clamav-0.103.0/etc/clamd.conf.s
  
  # Certain PE files contain an authenticode signature. By default, we check
  # the signature chain in the PE file against a database of trusted and
-@@ -375,7 +373,7 @@ Example
+@@ -380,7 +378,7 @@ Example
  # If you turn off this option, the original files will still be scanned, but
  # without additional processing.
  # Default: yes
@@ -203,7 +203,7 @@ diff -up clamav-0.103.0/etc/clamd.conf.sample.1~ clamav-0.103.0/etc/clamd.conf.s
  
  # This option enables scanning within PDF files.
  # If you turn off this option, the original files will still be scanned, but
-@@ -410,7 +408,7 @@ Example
+@@ -415,7 +413,7 @@ Example
  # If you turn off this option, the original files will still be scanned, but
  # without parsing individual messages/attachments.
  # Default: yes
@@ -212,7 +212,7 @@ diff -up clamav-0.103.0/etc/clamd.conf.sample.1~ clamav-0.103.0/etc/clamd.conf.s
  
  # Scan RFC1341 messages split over many emails.
  # You will need to periodically clean up $TemporaryDirectory/clamav-partial
-@@ -423,7 +421,7 @@ Example
+@@ -428,7 +426,7 @@ Example
  # With this option enabled ClamAV will try to detect phishing attempts by using
  # HTML.Phishing and Email.Phishing NDB signatures.
  # Default: yes
@@ -221,7 +221,7 @@ diff -up clamav-0.103.0/etc/clamd.conf.sample.1~ clamav-0.103.0/etc/clamd.conf.s
  
  # With this option enabled ClamAV will try to detect phishing attempts by
  # analyzing URLs found in emails using WDB and PDB signature databases.
-@@ -473,7 +471,7 @@ Example
+@@ -478,7 +476,7 @@ Example
  # Default: yes
  # If you turn off this option, the original files will still be scanned, but
  # without additional processing.
@@ -230,7 +230,7 @@ diff -up clamav-0.103.0/etc/clamd.conf.sample.1~ clamav-0.103.0/etc/clamd.conf.s
  
  
  ##
-@@ -484,7 +482,7 @@ Example
+@@ -489,7 +487,7 @@ Example
  # If you turn off this option, the original files will still be scanned, but
  # without unpacking and additional processing.
  # Default: yes
@@ -239,9 +239,9 @@ diff -up clamav-0.103.0/etc/clamd.conf.sample.1~ clamav-0.103.0/etc/clamd.conf.s
  
  
  ##
-diff -up clamav-0.103.0/etc/freshclam.conf.sample.1~ clamav-0.103.0/etc/freshclam.conf.sample
---- clamav-0.103.0/etc/freshclam.conf.sample.1~	2020-09-13 02:27:09.000000000 +0200
-+++ clamav-0.103.0/etc/freshclam.conf.sample	2020-09-19 16:54:32.742925593 +0200
+diff -up clamav-0.103.1/etc/freshclam.conf.sample.1~ clamav-0.103.1/etc/freshclam.conf.sample
+--- clamav-0.103.1/etc/freshclam.conf.sample.1~	2021-02-01 21:49:25.000000000 +0100
++++ clamav-0.103.1/etc/freshclam.conf.sample	2021-02-04 22:45:03.605201884 +0100
 @@ -4,17 +4,14 @@
  ##
  
@@ -328,4 +328,4 @@ diff -up clamav-0.103.0/etc/freshclam.conf.sample.1~ clamav-0.103.0/etc/freshcla
 +NotifyClamd /etc/clamd.conf
  
  # Run command after successful database update.
- # Default: disabled
+ # Use EXIT_1 to return 1 after successful database update.

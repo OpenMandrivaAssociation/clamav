@@ -12,7 +12,7 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.103.0
+Version:	0.103.1
 Release:	1
 License:	GPLv2+
 Group:		File tools
