@@ -47,7 +47,6 @@ BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	bzip2-devel
 BuildRequires:	tommath-devel
-BuildRequires:	libltdl-devel
 BuildRequires:	rpm-helper
 BuildRequires:	pkgconfig(libcurl)
 BuildRequires:	pkgconfig(ncurses)
@@ -56,7 +55,7 @@ BuildRequires:	pkgconfig(libsystemd)
 BuildRequires:	pkgconfig(libxml-2.0)
 BuildRequires:	pkgconfig(openssl)
 BuildRequires:	pkgconfig(check)
-BuildRequires:	pkgconfig(libpcre)
+BuildRequires:	pkgconfig(libpcre2-posix)
 BuildRequires:	pkgconfig(json-c)
 BuildRequires:	systemd
 BuildRequires:	zlib
