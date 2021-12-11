@@ -384,7 +384,6 @@ done
 %{_libdir}/libfreshclam.so.*
 
 %files -n %{develname}
-%{_docdir}/ClamAV
 %{_bindir}/%{name}-config
 %{_includedir}/*
 %{_libdir}/*.so
