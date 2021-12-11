@@ -51,6 +51,7 @@ BuildRequires:	rpm-helper
 BuildRequires:	pkgconfig(libcurl)
 BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(zlib)
+BuildRequires:	pkgconfig(libmspack)
 BuildRequires:	pkgconfig(libsystemd)
 BuildRequires:	pkgconfig(libxml-2.0)
 BuildRequires:	pkgconfig(openssl)
