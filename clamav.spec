@@ -1,9 +1,11 @@
 %define major 9
 %define libname %mklibname %{name} %{major}
 %define develname %mklibname %{name} -d
-%define debug_package %{nil}
 
-%define _disable_rebuild_configure 1
+# For debugsource package
+%global _empty_manifest_terminate_build 0
+
+
 %define _disable_lto 1
 
 %define milter 1
@@ -12,7 +14,7 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.103.2
+Version:	0.104.1
 Release:	1
 License:	GPLv2+
 Group:		File tools
@@ -24,19 +26,22 @@ Source5:	%{name}-freshclam.logrotate
 Source6:	%{name}-milter.service
 Source8:	%{name}-milter.logrotate
 # clamd service fails to start on clean systems without these files
-Source10:	http://db.local.clamav.net/main.cvd
-Source11:	http://db.local.clamav.net/daily.cvd
-Source12:	http://db.local.clamav.net/bytecode.cvd
+# these have to be manually downloaded through a web browser
+Source10:	http://database.clamav.net/main.cvd
+Source11:	http://database.clamav.net/daily.cvd
+Source12:	http://database.clamav.net/bytecode.cvd
 Source100:	%{name}.rpmlintrc
 Patch0:		%{name}-mdv_conf.diff
 Patch10:	%{name}-0.99-private.patch
-Patch13:	%{name}-0.98-umask.patch
+#Patch13:	%{name}-0.98-umask.patch
 # Fixed in this release
 # https://bugzilla.clamav.net/show_bug.cgi?id=5252
 #Patch14:	%%{name}-0.97.5-bug5252.diff
 Requires(post,preun):	%{name}-db
 Requires(post,preun):	%{libname} >= %{version}
 Requires(pre,post,post,postun):	rpm-helper
+BuildRequires:  cmake
+BuildRequires:  ninja
 BuildRequires:	bc
 BuildRequires:	bison
 BuildRequires:	flex
@@ -134,9 +139,6 @@ This package contains the development library and header files for the
 %setup -q -n %{name}-%{version}
 %autopatch -p1
 
-# (tpg) needed for patch2
-autoreconf -vfi
-
 # clean up
 for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type f -name .#\*` `find . -type d -name .svn`; do
     if [ -e "$i" ]; then rm -rf $i; fi >&/dev/null
@@ -158,41 +160,20 @@ cp %{SOURCE8} OMV/clamav-milter.logrotate
 
 %build
 %serverbuild
-export LDFLAGS="%{optflags} -lz"
-export CFLAGS="$CFLAGS -I%{_includedir}/tommath"
+# compatibility with zlib-ng
+export CFLAGS="$CFLAGS -DFAR="
+%cmake  \
+    -G Ninja \
+    -DAPP_CONFIG_DIRECTORY=/etc/ \
+    -DDATABASE_DIRECTORY=/var/lib/clamav \
+    -DENABLE_EXTERNAL_MSPACK=ON \
+    -DENABLE_UNRAR=OFF \
+    -DENABLE_LLVM=OFF
 
-# IPv6 check is buggy and does not work when there are no IPv6 interface on build machine
-export have_cv_ipv6=yes
-%configure \
-    --localstatedir=/var/lib \
-    --disable-%{name} \
-    --with-user=%{name} \
-    --with-group=%{name} \
-    --with-dbdir=/var/lib/%{name} \
-    --disable-rpath \
-    --disable-unrar \
-    --enable-clamdtop \
-    --enable-id-check \
-    --enable-clamuko \
-    --enable-bigstack \
-    --enable-fanotify \
-    --disable-llvm \
-    --with-libbz2-prefix=%{_prefix} \
-    --with-system-tommath \
-    --with-pcre \
-%if %{milter}
-    --enable-milter --with-tcpwrappers
-%else
-    --disable-milter --without-tcpwrappers
-%endif
-
-# anti rpath hack
-perl -pi -e "s|^sys_lib_dlsearch_path_spec=.*|sys_lib_dlsearch_path_spec=\"/%{_lib} %{_libdir}\"|g" libtool
-
-%make_build
+%ninja
 
 %install
-%make_install
+%ninja_install -C build
 
 install -d %{buildroot}%{_presetdir}
 cat > %{buildroot}%{_presetdir}/86-clamav-daemon.preset << EOF
@@ -400,10 +381,10 @@ done
 
 %files -n %{libname}
 %{_libdir}/*.so.%{major}*
-%{_libdir}/*.so.0*
 %{_libdir}/libfreshclam.so.*
 
 %files -n %{develname}
+%{_docdir}/ClamAV
 %{_bindir}/%{name}-config
 %{_includedir}/*
 %{_libdir}/*.so
