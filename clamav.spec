@@ -5,7 +5,6 @@
 # For debugsource package
 %global _empty_manifest_terminate_build 0
 
-
 %define _disable_lto 1
 
 %define milter 1
@@ -15,7 +14,7 @@
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	0.104.1
-Release:	1
+Release:	2
 License:	GPLv2+
 Group:		File tools
 URL:		http://www.clamav.net/
@@ -40,8 +39,8 @@ Patch10:	%{name}-0.99-private.patch
 Requires(post,preun):	%{name}-db
 Requires(post,preun):	%{libname} >= %{version}
 Requires(pre,post,post,postun):	rpm-helper
-BuildRequires:  cmake
-BuildRequires:  ninja
+BuildRequires:	cmake
+BuildRequires:	ninja
 BuildRequires:	bc
 BuildRequires:	bison
 BuildRequires:	flex
@@ -164,7 +163,7 @@ cp %{SOURCE8} OMV/clamav-milter.logrotate
 export CFLAGS="$CFLAGS -DFAR="
 %cmake  \
     -G Ninja \
-    -DAPP_CONFIG_DIRECTORY=/etc/ \
+    -DAPP_CONFIG_DIRECTORY=%{_sysconfdir} \
     -DDATABASE_DIRECTORY=/var/lib/clamav \
     -DENABLE_EXTERNAL_MSPACK=ON \
     -DENABLE_UNRAR=OFF \
@@ -333,17 +332,17 @@ done
 %{_bindir}/clamsubmit
 %{_bindir}/freshclam
 %{_bindir}/sigtool
-%{_mandir}/man1/clambc.1*
-%{_mandir}/man1/clamconf.1.*
-%{_mandir}/man1/clamdscan.1*
-%{_mandir}/man1/clamdtop.1*
-%{_mandir}/man1/clamscan.1*
-%{_mandir}/man1/clamsubmit.1*
-%{_mandir}/man1/freshclam.1*
-%{_mandir}/man1/sigtool.1*
-%{_mandir}/man5/clamd.conf.5*
-%{_mandir}/man5/freshclam.conf.5*
-%{_mandir}/man8/clamonacc.8*
+%doc %{_mandir}/man1/clambc.1*
+%doc %{_mandir}/man1/clamconf.1.*
+%doc %{_mandir}/man1/clamdscan.1*
+%doc %{_mandir}/man1/clamdtop.1*
+%doc %{_mandir}/man1/clamscan.1*
+%doc %{_mandir}/man1/clamsubmit.1*
+%doc %{_mandir}/man1/freshclam.1*
+%doc %{_mandir}/man1/sigtool.1*
+%doc %{_mandir}/man5/clamd.conf.5*
+%doc %{_mandir}/man5/freshclam.conf.5*
+%doc %{_mandir}/man8/clamonacc.8*
 %if !%{milter}
 %exclude %{_mandir}/man8/%{name}-milter.8*
 %endif
@@ -358,7 +357,7 @@ done
 %{_unitdir}/clamav-daemon.service
 %{_unitdir}/clamav-daemon.socket
 %{_sbindir}/clamd
-%{_mandir}/man8/clamd.8*
+%doc %{_mandir}/man8/clamd.8*
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/clamd.log
 
 %if %{milter}
@@ -369,8 +368,8 @@ done
 %{_presetdir}/86-milter.preset
 %{_unitdir}/%{name}-milter.service
 %{_sbindir}/%{name}-milter
-%{_mandir}/man8/%{name}-milter.8*
-%{_mandir}/man5/%{name}-milter.conf.5*
+%doc %{_mandir}/man8/%{name}-milter.8*
+%doc %{_mandir}/man5/%{name}-milter.conf.5*
 %ghost %attr(0644,%{name},%{name}) %{_var}/log/%{name}/%{name}-milter.log
 %endif
 
