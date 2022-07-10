@@ -6,7 +6,7 @@ After=network.target
 Type=forking
 User=clamav
 PIDFile=/run/clamav/clamd.pid
-ExecStart=/usr/sbin/clamd --config-file=/etc/clamd.conf
+ExecStart=/usr/bin/clamd --config-file=/etc/clamd.conf
 
 [Install]
 WantedBy=multi-user.target

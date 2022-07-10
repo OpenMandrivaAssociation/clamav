@@ -13,8 +13,8 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.104.1
-Release:	2
+Version:	0.105.0
+Release:	1
 License:	GPLv2+
 Group:		File tools
 URL:		http://www.clamav.net/
@@ -47,6 +47,8 @@ BuildRequires:	flex
 BuildRequires:	bzip2-devel
 BuildRequires:	tommath-devel
 BuildRequires:	rpm-helper
+BuildRequires:	rust
+BuildRequires:	cargo
 BuildRequires:	pkgconfig(libcurl)
 BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(zlib)
@@ -166,8 +168,7 @@ export CFLAGS="$CFLAGS -DFAR="
     -DAPP_CONFIG_DIRECTORY=%{_sysconfdir} \
     -DDATABASE_DIRECTORY=/var/lib/clamav \
     -DENABLE_EXTERNAL_MSPACK=ON \
-    -DENABLE_UNRAR=OFF \
-    -DENABLE_LLVM=OFF
+    -DENABLE_UNRAR=OFF
 
 %ninja
 
