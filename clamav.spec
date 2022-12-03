@@ -1,4 +1,4 @@
-%define major 10
+%define major 11
 %define libname %mklibname %{name} %{major}
 %define develname %mklibname %{name} -d
 
@@ -380,8 +380,8 @@ done
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}/tmp
 
 %files -n %{libname}
-#{_libdir}/*.so.%{major}*
-#{_libdir}/libfreshclam.so.*
+%{_libdir}/*.so.%{major}*
+%{_libdir}/libfreshclam.so.*
 
 %files -n %{develname}
 %{_docdir}/ClamAV
