@@ -1,4 +1,4 @@
-%define major 9
+%define major 11
 %define libname %mklibname %{name} %{major}
 %define develname %mklibname %{name} -d
 
@@ -13,7 +13,7 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	0.105.1
+Version:	1.0.0
 Release:	1
 License:	GPLv2+
 Group:		File tools
