@@ -1,9 +1,8 @@
-%define major 11
-%define libname %mklibname %{name} %{major}
+%define major 12
+%define libname %mklibname %{name}
 %define develname %mklibname %{name} -d
 
-# For debugsource package
-%global _empty_manifest_terminate_build 0
+%undefine _debugsource_packages
 
 %define _disable_lto 1
 
@@ -13,8 +12,8 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	1.0.1
-Release:	2
+Version:	1.1.0
+Release:	1
 License:	GPLv2+
 Group:		File tools
 URL:		http://www.clamav.net/
