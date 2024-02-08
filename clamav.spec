@@ -266,12 +266,10 @@ EOF
 # cleanup
 rm -f %{buildroot}%{_libdir}/*.*a
 
-%pre
-%_pre_useradd %{name} /var/lib/%{name} /bin/sh
-
-if ! [ -z "`getent group amavis`" ]; then
-    gpasswd -a %{name} amavis
-fi
+mkdir -p .%{_sysusersdir}
+cat >.%{_sysusersdir}/%{name}.conf <<'EOF'
+u %{name} - %{_localstatedir}/lib/%{name}/data /sbin/nologin
+EOF
 
 %post
 %create_ghostfile %{_var}/log/%{name}/freshclam.log %{name} %{name} 0644
@@ -280,15 +278,11 @@ fi
 %preun
 %systemd_preun clamav-daemon.socket
 
-%pre -n clamd
-%_pre_useradd %{name} /var/lib/%{name} /bin/sh
-
 %post -n clamd
 %create_ghostfile %{_var}/log/%{name}/clamd.log %{name} %{name} 0644
 %systemd_post %{name}-daemon.socket
 
 %postun -n clamd
-%_postun_userdel %{name}
 %systemd_preun %{name}-daemon.socket
 
 %if %{milter}
@@ -296,8 +290,6 @@ fi
 %create_ghostfile %{_var}/log/%{name}/%{name}-milter.log %{name} %{name} 0644
 %endif
 
-%pre -n %{name}-db
-%_pre_useradd %{name} /var/lib/%{name} /bin/sh
 
 %post -n %{name}-db
 # try to keep most uptodate database
@@ -319,6 +311,7 @@ done
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/freshclam.conf*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/freshclam
+%{_sysusersdir}/%{name}.conf
 %{_presetdir}/86-clamav-freshclam.preset
 %{_unitdir}/%{name}-freshclam.service
 %{_unitdir}/%{name}-freshclam-once.service
