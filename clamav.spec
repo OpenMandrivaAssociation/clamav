@@ -12,12 +12,12 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	1.2.1
+Version:	1.3.0
 Release:	1
 License:	GPLv2+
 Group:		File tools
-URL:		http://www.clamav.net/
-Source0:	http://www.clamav.net/downloads/production/clamav-%{version}.tar.gz
+URL:		https://www.clamav.net/
+Source0:	https://www.clamav.net/downloads/production/clamav-%{version}.tar.gz
 Source1:	clamd-tmpfiles.conf
 Source3:	%{name}-clamd.logrotate
 Source5:	%{name}-freshclam.logrotate
