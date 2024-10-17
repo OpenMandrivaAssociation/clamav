@@ -16,7 +16,7 @@ Version:	1.2.1
 Release:	1
 License:	GPLv2+
 Group:		File tools
-URL:		http://www.clamav.net/
+URL:		https://www.clamav.net/
 Source0:	http://www.clamav.net/downloads/production/clamav-%{version}.tar.gz
 Source1:	clamd-tmpfiles.conf
 Source3:	%{name}-clamd.logrotate
