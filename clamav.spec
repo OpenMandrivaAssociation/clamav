@@ -266,9 +266,12 @@ EOF
 # cleanup
 rm -f %{buildroot}%{_libdir}/*.*a
 
-%pre
-%_pre_useradd %{name} /var/lib/%{name} /bin/sh
+mkdir -p %{buildroot}%{_sysusersdir}
+cat >%{buildroot}%{_sysusersdir}/%{name}.conf <<EOF
+u %{name} - "ClamAV virus scanner" /var/lib/%{name} %{_bindir}/sh
+EOF
 
+%pre
 if ! [ -z "`getent group amavis`" ]; then
     gpasswd -a %{name} amavis
 fi
@@ -280,24 +283,17 @@ fi
 %preun
 %systemd_preun clamav-daemon.socket
 
-%pre -n clamd
-%_pre_useradd %{name} /var/lib/%{name} /bin/sh
-
 %post -n clamd
 %create_ghostfile %{_var}/log/%{name}/clamd.log %{name} %{name} 0644
 %systemd_post %{name}-daemon.socket
 
 %postun -n clamd
-%_postun_userdel %{name}
 %systemd_preun %{name}-daemon.socket
 
 %if %{milter}
 %post -n %{name}-milter
 %create_ghostfile %{_var}/log/%{name}/%{name}-milter.log %{name} %{name} 0644
 %endif
-
-%pre -n %{name}-db
-%_pre_useradd %{name} /var/lib/%{name} /bin/sh
 
 %post -n %{name}-db
 # try to keep most uptodate database
@@ -310,9 +306,6 @@ for i in main daily; do
 		fi
 	fi
 done
-
-%postun -n %{name}-db
-%_postun_userdel %{name}
 
 %files
 %doc README.qmail+qmail-scanner COPYING*
@@ -379,6 +372,7 @@ done
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}
 %config /var/lib/%{name}/*cvd
 %dir %attr(0755,%{name},%{name}) /var/lib/%{name}/tmp
+%{_sysusersdir}/%{name}.conf
 
 %files -n %{libname}
 %{_libdir}/*.so.%{major}*
