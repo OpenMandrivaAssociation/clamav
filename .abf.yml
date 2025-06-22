@@ -1,5 +1,5 @@
 sources:
-  bytecode.cvd: c3f153229175ba7a34e9324af44e5ee1af535ea8
-  daily.cvd: 010e9d37cbd595bb6dda24eccf1bac7b6e8c9757
+  clamav-1.4.3.tar.gz: a852f97c8b6f15940204aa68e40fbc97a5258ed7
+  bytecode.cvd: 60a12758a20e34f243291937c2ae0f2e3991d8a9
+  daily.cvd: 14f860686dea4ca2af580f423d9f1cbfe871bf03
   main.cvd: 029931779fb5d13625464995549421c108ae5518
-  clamav-1.4.2.tar.gz: bb28848206df9014c9e3e5d89219cd953c685629
