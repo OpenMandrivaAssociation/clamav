@@ -12,7 +12,7 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	1.4.3
+Version:	1.5.0
 Release:	1
 License:	GPLv2+
 Group:		File tools
@@ -312,6 +312,7 @@ done
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/clamd.conf*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/freshclam.conf*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/freshclam
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/certs/clamav.crt
 %{_presetdir}/86-clamav-freshclam.preset
 %{_unitdir}/%{name}-freshclam.service
 %{_unitdir}/%{name}-freshclam-once.service
