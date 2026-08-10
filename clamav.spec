@@ -13,7 +13,7 @@
 Summary:	An anti-virus utility for Unix
 Name:		clamav
 Version:	1.5.4
-Release:	1
+Release:	2
 License:	GPLv2+
 Group:		File tools
 URL:		https://www.clamav.net/
@@ -33,6 +33,8 @@ Source12:	https://database.clamav.net/bytecode.cvd
 Source100:	%{name}.rpmlintrc
 Patch0:		%{name}-mdv_conf.diff
 Patch10:	%{name}-0.99-private.patch
+# OpenSSL 4.0 made ASN1_TIME opaque; use accessors (PR #1642)
+Patch11:	%{name}-openssl4-asn1-time.patch
 #Patch13:	%{name}-0.98-umask.patch
 # Fixed in this release
 # https://bugzilla.clamav.net/show_bug.cgi?id=5252
