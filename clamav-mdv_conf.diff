@@ -1,6 +1,6 @@
-diff -up clamav-1.5.0/etc/clamav-milter.conf.sample.1~ clamav-1.5.0/etc/clamav-milter.conf.sample
---- clamav-1.5.0/etc/clamav-milter.conf.sample.1~	2025-10-06 13:46:34.000000000 +0200
-+++ clamav-1.5.0/etc/clamav-milter.conf.sample	2025-10-08 13:58:25.311314623 +0200
+diff -up clamav-1.5.4/etc/clamav-milter.conf.sample.1~ clamav-1.5.4/etc/clamav-milter.conf.sample
+--- clamav-1.5.4/etc/clamav-milter.conf.sample.1~	2025-10-06 13:46:34.000000000 +0200
++++ clamav-1.5.4/etc/clamav-milter.conf.sample	2025-10-08 13:58:25.311314623 +0200
 @@ -2,9 +2,6 @@
  ## Example config file for clamav-milter
  ##
@@ -79,9 +79,9 @@ diff -up clamav-1.5.0/etc/clamav-milter.conf.sample.1~ clamav-1.5.0/etc/clamav-m
  
  # Enable log rotation. Always enabled when LogFileMaxSize is enabled.
  # Default: no
-diff -up clamav-1.5.0/etc/clamd.conf.sample.1~ clamav-1.5.0/etc/clamd.conf.sample
---- clamav-1.5.0/etc/clamd.conf.sample.1~	2025-10-06 13:46:34.000000000 +0200
-+++ clamav-1.5.0/etc/clamd.conf.sample	2025-10-08 14:03:22.433216311 +0200
+diff -up clamav-1.5.4/etc/clamd.conf.sample.1~ clamav-1.5.4/etc/clamd.conf.sample
+--- clamav-1.5.4/etc/clamd.conf.sample.1~	2025-10-06 13:46:34.000000000 +0200
++++ clamav-1.5.4/etc/clamd.conf.sample	2025-10-08 14:03:22.433216311 +0200
 @@ -4,14 +4,11 @@
  ##
  
@@ -186,9 +186,9 @@ diff -up clamav-1.5.0/etc/clamd.conf.sample.1~ clamav-1.5.0/etc/clamd.conf.sampl
  
  # With this option enabled ClamAV will try to detect phishing attempts by
  # analyzing URLs found in emails using WDB and PDB signature databases.
-diff -up clamav-1.5.0/etc/freshclam.conf.sample.1~ clamav-1.5.0/etc/freshclam.conf.sample
---- clamav-1.5.0/etc/freshclam.conf.sample.1~	2025-10-06 13:46:34.000000000 +0200
-+++ clamav-1.5.0/etc/freshclam.conf.sample	2025-10-08 14:04:10.519508503 +0200
+diff -up clamav-1.5.4/etc/freshclam.conf.sample.1~ clamav-1.5.4/etc/freshclam.conf.sample
+--- clamav-1.5.4/etc/freshclam.conf.sample.1~	2025-10-06 13:46:34.000000000 +0200
++++ clamav-1.5.4/etc/freshclam.conf.sample	2025-10-08 14:04:10.519508503 +0200
 @@ -12,7 +12,7 @@ Example
  # WARNING: It must already exist, be an absolute path, be writeable by
  # freshclam, and be readable by clamd/clamscan.

@@ -12,22 +12,24 @@
 
 Summary:	An anti-virus utility for Unix
 Name:		clamav
-Version:	1.5.0
-Release:	3
+Version:	1.5.4
+Release:	1
 License:	GPLv2+
 Group:		File tools
 URL:		https://www.clamav.net/
-Source0:	http://www.clamav.net/downloads/production/clamav-%{version}.tar.gz
+Source0:	https://www.clamav.net/downloads/production/clamav-%{version}.tar.gz
 Source1:	clamd-tmpfiles.conf
 Source3:	%{name}-clamd.logrotate
 Source5:	%{name}-freshclam.logrotate
 Source6:	%{name}-milter.service
 Source8:	%{name}-milter.logrotate
-# clamd service fails to start on clean systems without these files
-# these have to be manually downloaded through a web browser
-Source10:	http://database.clamav.net/main.cvd
-Source11:	http://database.clamav.net/daily.cvd
-Source12:	http://database.clamav.net/bytecode.cvd
+# Bootstrap virus DBs so clamd can start before the first freshclam run.
+# Cloudflare blocks wget/curl; refresh with: ./check-update.sh --cvd
+# then drop the old *.cvd lines from .abf.yml and:
+#   abb store main.cvd && abb store daily.cvd && abb store bytecode.cvd
+Source10:	https://database.clamav.net/main.cvd
+Source11:	https://database.clamav.net/daily.cvd
+Source12:	https://database.clamav.net/bytecode.cvd
 Source100:	%{name}.rpmlintrc
 Patch0:		%{name}-mdv_conf.diff
 Patch10:	%{name}-0.99-private.patch
@@ -35,9 +37,9 @@ Patch10:	%{name}-0.99-private.patch
 # Fixed in this release
 # https://bugzilla.clamav.net/show_bug.cgi?id=5252
 #Patch14:	%%{name}-0.97.5-bug5252.diff
-Requires(post,preun):	%{name}-db
+Requires(post,preun):	%{name}-db = %{EVRD}
 Requires(post,preun):	%{libname} >= %{version}
-Requires(pre,post,post,postun):	rpm-helper
+Requires(pre,post,postun):	rpm-helper
 BuildRequires:	cmake
 BuildRequires:	ninja
 BuildRequires:	bc
@@ -67,7 +69,7 @@ BuildRequires:	tcp_wrappers-devel
 
 %description
 Clam AntiVirus is an anti-virus toolkit for Unix. The main purpose of this
-software is the integration with mail seversions (attachment scanning). The
+software is the integration with mail servers (attachment scanning). The
 package provides a flexible and scalable multi-threaded daemon, a command-line
 scanner, and a tool for automatic updating via Internet. The programs are
 based on a shared library distributed with the Clam AntiVirus package, which
@@ -79,10 +81,10 @@ You can build %{name} with some conditional build switches; (ie. use with rpm
 %package -n clamd
 Summary:	The Clam AntiVirus Daemon
 Group:		System/Servers
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{EVRD}
 Conflicts:	%{name} < 0.99.2-4
-Requires(post,preun):	%{name}-db
-Requires(post,preun):	%{libname} = %{version}
+Requires(post,preun):	%{name}-db = %{EVRD}
+Requires(post,preun):	%{libname} = %{EVRD}
 Requires(pre,post):	rpm-helper
 
 
@@ -93,12 +95,12 @@ The Clam AntiVirus Daemon.
 %package -n %{name}-milter
 Summary:	The Clam AntiVirus milter Daemon
 Group:		System/Servers
-Requires:	%{name} = %{version}
-Requires:	clamd = %{version}
+Requires:	%{name} = %{EVRD}
+Requires:	clamd = %{EVRD}
 Requires:	tcp_wrappers
-Requires(post,preun):	%{name}-db
+Requires(post,preun):	%{name}-db = %{EVRD}
 Requires(pre,post):	rpm-helper
-Requires(post,preun):	%{libname} = %{version}
+Requires(post,preun):	%{libname} = %{EVRD}
 
 
 %description -n	%{name}-milter
@@ -108,7 +110,7 @@ The Clam AntiVirus milter Daemon.
 %package -n %{name}-db
 Summary:	Virus database for %{name}
 Group:		Databases
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{EVRD}
 Requires(pre,post):	rpm-helper
 
 %description -n	%{name}-db
@@ -124,7 +126,7 @@ Shared libraries for %{name}.
 %package -n %{develname}
 Summary:	Development library and header files for the %{name} library
 Group:		Development/C
-Requires:	%{libname} = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
 Provides:	%{name}-devel = %{version}
 Obsoletes:	%{name}-devel < %{version}
 %rename		%{_lib}clamav1-devel
@@ -278,17 +280,9 @@ fi
 
 %post
 %create_ghostfile %{_var}/log/%{name}/freshclam.log %{name} %{name} 0644
-%systemd_post %{name}-freshclam.service
-
-%preun
-%systemd_preun clamav-daemon.socket
 
 %post -n clamd
 %create_ghostfile %{_var}/log/%{name}/clamd.log %{name} %{name} 0644
-%systemd_post %{name}-daemon.socket
-
-%postun -n clamd
-%systemd_preun %{name}-daemon.socket
 
 %if %{milter}
 %post -n %{name}-milter
@@ -297,7 +291,7 @@ fi
 
 %post -n %{name}-db
 # try to keep most uptodate database
-for i in main daily; do
+for i in main daily bytecode; do
 	if [ -f %{_var}/lib/%{name}/$i.cvd.rpmnew ]; then
 		if [ %{_var}/lib/%{name}/$i.cvd.rpmnew -nt %{_var}/lib/%{name}/$i.cvd ]; then
 			mv -f %{_var}/lib/%{name}/$i.cvd.rpmnew %{_var}/lib/%{name}/$i.cvd
